@@ -3,25 +3,37 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Mapa del ecosistema cervecero artesanal de Yucatán (octubre 2026)</title>
+<title>Cerveza Yucatán · Mapa de la escena artesanal</title>
+<meta name="description" content="Mapa de la cerveza artesanal yucateca: 25 cerveceras, 11+ taprooms, historia, eventos. Publicado por @inexpertoscerveceros.">
+<meta property="og:title" content="Cerveza Yucatán">
+<meta property="og:description" content="25 cerveceras, 11+ taprooms, historia y eventos. La escena artesanal de Yucatán, en un solo mapa.">
+<meta property="og:image" content="https://cervezayucatan.com/img/hero.jpg">
+<meta property="og:url" content="https://cervezayucatan.com">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" type="image/png" href="img/logo.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,400;0,600;0,800;1,400&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css" integrity="sha512-h9FcoyWjHcOcmEVkxOfTLnmZFWIH0iZhZT1H2TbOq55xssQGEJHEaIm+PgoUaZbRvQTNTluNOEfb1ZRy6D3BOw==" crossorigin="anonymous">
 <style>
 :root {
   color-scheme: light;
   --bg: #faf6ef;
+  --bg-alt: #f3ead9;
   --surface: #ffffff;
-  --surface-alt: #f3ead9;
   --ink: #1f1a14;
   --ink-soft: #4a4036;
   --muted: #7a6f61;
   --rule: #e4d9c3;
   --accent: #c25a1c;
+  --accent-hover: #a4480f;
   --accent-soft: #f0b068;
   --teal: #2f7f87;
+  --teal-hover: #246269;
   --olive: #5a6349;
+  --amber: #d9a441;
   --box-shadow: 0 1px 2px rgba(31,26,20,0.04), 0 8px 24px rgba(31,26,20,0.06);
+  --shadow-lg: 0 4px 8px rgba(31,26,20,0.08), 0 16px 48px rgba(31,26,20,0.12);
   box-sizing: border-box;
   padding-top: env(safe-area-inset-top, 0px);
   padding-bottom: env(safe-area-inset-bottom, 0px);
@@ -30,36 +42,26 @@
   :root:not([data-theme="light"]) {
     color-scheme: dark;
     --bg: #15110c;
-    --surface: #1e1812;
-    --surface-alt: #27201a;
+    --bg-alt: #1e1812;
+    --surface: #27201a;
     --ink: #f5ecdd;
     --ink-soft: #d4c6ae;
     --muted: #998a76;
     --rule: #3a3028;
     --accent: #e9814a;
+    --accent-hover: #f2a070;
     --accent-soft: #f0b068;
     --teal: #6abac2;
+    --teal-hover: #8fcfd5;
     --olive: #a4ac8e;
+    --amber: #e9b85e;
     --box-shadow: 0 1px 2px rgba(0,0,0,0.3), 0 8px 24px rgba(0,0,0,0.4);
+    --shadow-lg: 0 4px 8px rgba(0,0,0,0.4), 0 16px 48px rgba(0,0,0,0.5);
   }
-}
-:root[data-theme="dark"] {
-  color-scheme: dark;
-  --bg: #15110c;
-  --surface: #1e1812;
-  --surface-alt: #27201a;
-  --ink: #f5ecdd;
-  --ink-soft: #d4c6ae;
-  --muted: #998a76;
-  --rule: #3a3028;
-  --accent: #e9814a;
-  --accent-soft: #f0b068;
-  --teal: #6abac2;
-  --olive: #a4ac8e;
-  --box-shadow: 0 1px 2px rgba(0,0,0,0.3), 0 8px 24px rgba(0,0,0,0.4);
 }
 * { box-sizing: border-box; }
 html, body { margin: 0; padding: 0; }
+html { scroll-behavior: smooth; scroll-padding-top: 80px; }
 body {
   background: var(--bg);
   color: var(--ink);
@@ -67,692 +69,1504 @@ body {
   font-size: 16px;
   line-height: 1.65;
   -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
 }
-.band {
-  height: 6px;
-  background: linear-gradient(90deg, #d7c9a3 0 20%, #a8d2d1 20% 40%, #e07c3f 40% 65%, #6c6b58 65% 100%);
-}
-.wrap {
-  max-width: 820px;
-  margin: 0 auto;
-  padding: 0 clamp(16px, 4vw, 40px);
-}
-header.hero {
-  padding: clamp(32px, 6vw, 64px) 0 clamp(24px, 4vw, 40px);
-  border-bottom: 1px solid var(--rule);
-  margin-bottom: clamp(28px, 5vw, 48px);
-}
-.kicker {
-  font-family: 'Inter', sans-serif;
-  font-size: 13px;
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
-  color: var(--accent);
-  font-weight: 600;
-  margin: 0 0 14px;
-}
-h1 {
-  font-family: 'Fraunces', Georgia, serif;
-  font-weight: 800;
-  font-size: clamp(28px, 5vw, 44px);
-  line-height: 1.1;
-  letter-spacing: -0.02em;
-  margin: 0 0 18px;
-  color: var(--ink);
-}
-.subtitle {
-  font-family: 'Fraunces', Georgia, serif;
-  font-style: italic;
-  font-weight: 400;
-  font-size: clamp(16px, 2.2vw, 19px);
-  color: var(--ink-soft);
-  margin: 0;
-  line-height: 1.5;
-}
-.meta {
-  margin-top: 20px;
-  font-size: 13px;
-  color: var(--muted);
-}
-h2 {
-  font-family: 'Fraunces', Georgia, serif;
-  font-weight: 700;
-  font-size: clamp(22px, 3.6vw, 30px);
-  line-height: 1.2;
-  letter-spacing: -0.01em;
-  margin: clamp(40px, 6vw, 56px) 0 18px;
-  color: var(--ink);
-  padding-bottom: 10px;
-  border-bottom: 2px solid var(--accent);
-  display: inline-block;
-}
-h3 {
-  font-family: 'Fraunces', Georgia, serif;
-  font-weight: 600;
-  font-size: clamp(18px, 2.6vw, 22px);
-  line-height: 1.3;
-  margin: 32px 0 10px;
-  color: var(--teal);
-}
-h4 {
-  font-family: 'Inter', sans-serif;
-  font-weight: 700;
-  font-size: 15px;
-  letter-spacing: 0.02em;
-  text-transform: uppercase;
-  margin: 28px 0 6px;
-  color: var(--olive);
-}
-p { margin: 0 0 14px; color: var(--ink-soft); }
-p.lede {
-  font-family: 'Fraunces', Georgia, serif;
-  font-size: clamp(17px, 2.3vw, 20px);
-  line-height: 1.55;
-  color: var(--ink);
-  margin-bottom: 20px;
-}
-ul, ol { padding-left: 22px; margin: 0 0 18px; color: var(--ink-soft); }
-li { margin-bottom: 6px; }
-li > strong { color: var(--ink); }
-strong { color: var(--ink); font-weight: 600; }
-em { color: var(--ink-soft); }
-a { color: var(--teal); text-decoration: none; border-bottom: 1px dotted var(--teal); }
-a:hover { color: var(--accent); border-bottom-color: var(--accent); }
+a { color: var(--teal); text-decoration: none; }
+a:hover { color: var(--accent); }
 
-.tldr {
-  background: var(--surface-alt);
-  border-left: 4px solid var(--accent);
-  padding: 20px 24px;
-  border-radius: 4px;
-  margin: 24px 0 32px;
+/* ========== HEADER ========== */
+.site-header {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 100;
+  background: rgba(250, 246, 239, 0.92);
+  backdrop-filter: saturate(140%) blur(10px);
+  -webkit-backdrop-filter: saturate(140%) blur(10px);
+  border-bottom: 1px solid var(--rule);
+  padding: env(safe-area-inset-top, 0px) 0 0;
 }
-.tldr h2 {
-  border: none;
-  padding: 0;
-  margin: 0 0 10px;
-  font-size: 20px;
-  color: var(--accent);
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) .site-header {
+    background: rgba(21, 17, 12, 0.9);
+  }
+}
+.header-inner {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 12px clamp(16px, 4vw, 32px);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  text-decoration: none;
+  color: var(--ink);
+}
+.brand img {
+  width: 40px;
+  height: 40px;
   display: block;
 }
-.tldr ul { margin-bottom: 0; }
-
-.card {
-  background: var(--surface);
-  border: 1px solid var(--rule);
-  border-radius: 8px;
-  padding: 20px 22px;
-  margin: 20px 0;
-  box-shadow: var(--box-shadow);
+.brand-text {
+  display: flex;
+  flex-direction: column;
+  line-height: 1.1;
 }
-.card h3 { margin-top: 0; }
-.card ul { margin-bottom: 0; }
-
-.tag {
-  display: inline-block;
-  font-size: 11px;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  font-weight: 600;
-  padding: 2px 8px;
-  border-radius: 999px;
-  background: var(--accent-soft);
-  color: #4a2a0f;
-  margin-left: 8px;
-  vertical-align: middle;
-}
-.tag.inactive { background: var(--rule); color: var(--muted); }
-.tag.caution { background: #f6d6c7; color: #6b2d10; }
-
-.region {
-  font-family: 'Inter', sans-serif;
-  font-size: 13px;
-  letter-spacing: 0.18em;
-  text-transform: uppercase;
-  color: var(--muted);
-  font-weight: 600;
-  padding: 14px 0;
-  margin: 36px 0 12px;
-  border-top: 1px solid var(--rule);
-  border-bottom: 1px solid var(--rule);
-}
-
-.table-wrap { overflow-x: auto; margin: 18px 0; -webkit-overflow-scrolling: touch; }
-table {
-  width: 100%;
-  min-width: 540px;
-  border-collapse: collapse;
-  font-size: 14px;
-  background: var(--surface);
-  border-radius: 6px;
-  overflow: hidden;
-}
-th, td {
-  text-align: left;
-  padding: 10px 12px;
-  border-bottom: 1px solid var(--rule);
-  vertical-align: top;
-  color: var(--ink-soft);
-}
-th {
-  background: var(--surface-alt);
+.brand-text strong {
+  font-family: 'Fraunces', Georgia, serif;
+  font-weight: 700;
+  font-size: 16px;
   color: var(--ink);
-  font-size: 12px;
+  letter-spacing: -0.01em;
+}
+.brand-text span {
+  font-size: 11px;
+  color: var(--muted);
   letter-spacing: 0.06em;
   text-transform: uppercase;
+}
+.nav {
+  display: flex;
+  gap: 24px;
+  align-items: center;
+}
+.nav a {
+  color: var(--ink-soft);
+  font-size: 14px;
+  font-weight: 500;
+  text-decoration: none;
+  transition: color 0.15s;
+}
+.nav a:hover { color: var(--accent); }
+.nav-ig {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 14px;
+  background: var(--accent);
+  color: #fff !important;
+  border-radius: 999px;
   font-weight: 600;
+  transition: background 0.15s;
 }
-td:first-child { color: var(--ink); font-weight: 500; }
-
-.quote {
-  font-family: 'Fraunces', Georgia, serif;
-  font-style: italic;
-  font-size: 17px;
+.nav-ig:hover { background: var(--accent-hover); color: #fff !important; }
+.nav-ig svg { width: 16px; height: 16px; }
+.hamburger {
+  display: none;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 8px;
   color: var(--ink);
-  border-left: 3px solid var(--teal);
-  padding: 4px 0 4px 16px;
-  margin: 16px 0;
+}
+@media (max-width: 760px) {
+  .nav { display: none; position: absolute; top: 100%; left: 0; right: 0; background: var(--bg); flex-direction: column; align-items: stretch; padding: 16px; border-bottom: 1px solid var(--rule); gap: 4px; }
+  .nav.open { display: flex; }
+  .nav a { padding: 12px 8px; border-radius: 6px; }
+  .nav a:hover { background: var(--bg-alt); }
+  .nav-ig { justify-content: center; margin-top: 8px; }
+  .hamburger { display: block; }
 }
 
-footer {
-  margin: 60px 0 40px;
-  padding-top: 24px;
+/* ========== HERO ========== */
+.hero {
+  position: relative;
+  min-height: 100vh;
+  min-height: 100svh;
+  display: flex;
+  align-items: center;
+  color: #fff;
+  overflow: hidden;
+  margin-top: 0;
+  padding-top: 72px;
+}
+.hero::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: url('img/hero.jpg') center center / cover no-repeat;
+  z-index: 0;
+}
+.hero::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, rgba(0,0,0,0.72) 0%, rgba(0,0,0,0.45) 50%, rgba(31,26,20,0.6) 100%);
+  z-index: 1;
+}
+.hero-inner {
+  position: relative;
+  z-index: 2;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: clamp(40px, 8vw, 80px) clamp(16px, 4vw, 32px);
+  width: 100%;
+}
+.hero-eyebrow {
+  display: inline-block;
+  font-size: 12px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  font-weight: 600;
+  color: var(--amber);
+  margin: 0 0 20px;
+  padding: 6px 12px;
+  border: 1px solid rgba(217, 164, 65, 0.5);
+  border-radius: 999px;
+}
+.hero h1 {
+  font-family: 'Fraunces', Georgia, serif;
+  font-weight: 800;
+  font-size: clamp(36px, 7vw, 72px);
+  line-height: 1.02;
+  letter-spacing: -0.025em;
+  margin: 0 0 24px;
+  max-width: 14ch;
+  color: #fff;
+}
+.hero h1 em {
+  font-style: italic;
+  font-weight: 400;
+  color: var(--amber);
+}
+.hero-sub {
+  font-family: 'Fraunces', Georgia, serif;
+  font-weight: 400;
+  font-size: clamp(17px, 2.2vw, 22px);
+  line-height: 1.5;
+  max-width: 52ch;
+  color: rgba(255,255,255,0.9);
+  margin: 0 0 36px;
+}
+.hero-ctas {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 14px 24px;
+  border-radius: 999px;
+  font-weight: 600;
+  font-size: 15px;
+  text-decoration: none;
+  transition: transform 0.15s, background 0.15s, box-shadow 0.15s;
+  border: none;
+  cursor: pointer;
+  font-family: inherit;
+}
+.btn-primary {
+  background: var(--accent);
+  color: #fff !important;
+  box-shadow: 0 4px 16px rgba(194, 90, 28, 0.4);
+}
+.btn-primary:hover { background: var(--accent-hover); transform: translateY(-1px); box-shadow: 0 6px 20px rgba(194, 90, 28, 0.5); }
+.btn-secondary {
+  background: rgba(255,255,255,0.15);
+  color: #fff !important;
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid rgba(255,255,255,0.3);
+}
+.btn-secondary:hover { background: rgba(255,255,255,0.25); transform: translateY(-1px); }
+.btn svg { width: 18px; height: 18px; }
+
+.hero-scroll {
+  position: absolute;
+  bottom: 24px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 3;
+  color: rgba(255,255,255,0.6);
+  font-size: 11px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  animation: bounce 2.5s ease-in-out infinite;
+}
+@keyframes bounce {
+  0%, 100% { transform: translateX(-50%) translateY(0); }
+  50% { transform: translateX(-50%) translateY(6px); }
+}
+
+/* ========== SECCIONES GENERALES ========== */
+section {
+  padding: clamp(60px, 10vw, 100px) 0;
+}
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 clamp(16px, 4vw, 32px);
+}
+.container-narrow {
+  max-width: 820px;
+  margin: 0 auto;
+  padding: 0 clamp(16px, 4vw, 32px);
+}
+.section-alt { background: var(--bg-alt); }
+.section-eyebrow {
+  display: inline-block;
+  font-size: 12px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  font-weight: 600;
+  color: var(--accent);
+  margin: 0 0 12px;
+}
+.section-title {
+  font-family: 'Fraunces', Georgia, serif;
+  font-weight: 700;
+  font-size: clamp(28px, 4.5vw, 44px);
+  line-height: 1.1;
+  letter-spacing: -0.02em;
+  margin: 0 0 20px;
+  color: var(--ink);
+}
+.section-title em { font-style: italic; font-weight: 400; color: var(--accent); }
+.section-sub {
+  font-family: 'Fraunces', Georgia, serif;
+  font-size: clamp(16px, 2vw, 19px);
+  line-height: 1.5;
+  color: var(--ink-soft);
+  margin: 0 0 48px;
+  max-width: 60ch;
+}
+
+/* ========== CIFRAS CLAVE ========== */
+.stats {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 20px;
+  margin-top: 32px;
+}
+.stat-card {
+  background: var(--surface);
+  border: 1px solid var(--rule);
+  border-radius: 12px;
+  padding: 28px 24px;
+  text-align: left;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+.stat-card:hover { transform: translateY(-2px); box-shadow: var(--shadow-lg); }
+.stat-num {
+  font-family: 'Fraunces', Georgia, serif;
+  font-weight: 800;
+  font-size: clamp(40px, 6vw, 56px);
+  line-height: 1;
+  color: var(--accent);
+  letter-spacing: -0.03em;
+  display: block;
+  margin-bottom: 8px;
+}
+.stat-label {
+  font-size: 14px;
+  color: var(--ink-soft);
+  font-weight: 500;
+  line-height: 1.4;
+}
+.stat-label strong { color: var(--ink); font-weight: 600; }
+
+/* ========== INTRO EDITORIAL ========== */
+.intro p {
+  font-family: 'Fraunces', Georgia, serif;
+  font-size: clamp(17px, 2.1vw, 20px);
+  line-height: 1.6;
+  color: var(--ink);
+  margin: 0 0 20px;
+}
+.intro p:first-of-type::first-letter {
+  font-size: 3.6em;
+  float: left;
+  line-height: 0.85;
+  padding: 6px 10px 0 0;
+  color: var(--accent);
+  font-weight: 800;
+}
+
+/* ========== CERVECERAS: GRUPO Y CARDS ========== */
+.city-group {
+  margin-bottom: 56px;
+}
+.city-name {
+  font-family: 'Inter', sans-serif;
+  font-size: 13px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  font-weight: 700;
+  color: var(--muted);
+  margin: 0 0 20px;
+  padding-bottom: 10px;
+  border-bottom: 2px solid var(--rule);
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
+}
+.city-name span { font-size: 12px; color: var(--muted); font-weight: 400; letter-spacing: 0; text-transform: none; }
+.brewery-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 20px;
+}
+.brewery {
+  background: var(--surface);
+  border: 1px solid var(--rule);
+  border-radius: 14px;
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  transition: transform 0.2s, box-shadow 0.2s, border-color 0.2s;
+  position: relative;
+  overflow: hidden;
+}
+.brewery:hover { transform: translateY(-3px); box-shadow: var(--shadow-lg); border-color: var(--accent-soft); }
+.brewery-head {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+}
+.brewery-sello {
+  flex-shrink: 0;
+  width: 54px;
+  height: 54px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'Fraunces', Georgia, serif;
+  font-weight: 700;
+  font-size: 20px;
+  color: #fff;
+  letter-spacing: -0.03em;
+}
+.brewery-name {
+  font-family: 'Fraunces', Georgia, serif;
+  font-weight: 700;
+  font-size: 20px;
+  line-height: 1.15;
+  color: var(--ink);
+  margin: 0 0 4px;
+  letter-spacing: -0.01em;
+}
+.brewery-meta {
+  font-size: 12px;
+  color: var(--muted);
+  letter-spacing: 0.04em;
+}
+.brewery-blurb {
+  font-size: 14px;
+  line-height: 1.55;
+  color: var(--ink-soft);
+  margin: 0;
+}
+.brewery-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 4px;
+}
+.brewery-tag {
+  font-size: 11px;
+  padding: 3px 10px;
+  background: var(--bg-alt);
+  color: var(--ink-soft);
+  border-radius: 999px;
+  font-weight: 500;
+}
+.brewery-links {
+  margin-top: auto;
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  padding-top: 8px;
   border-top: 1px solid var(--rule);
   font-size: 13px;
+}
+.brewery-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  color: var(--teal);
+  font-weight: 500;
+}
+.brewery-link:hover { color: var(--accent); }
+.status-dot {
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  margin-right: 4px;
+  flex-shrink: 0;
+}
+.status-active { background: #4a8c3a; }
+.status-paused { background: #d9a441; }
+.status-foreign { background: var(--teal); }
+
+/* Colores de sello por tipo */
+.sello-1 { background: linear-gradient(135deg, #c25a1c, #e07c3f); }
+.sello-2 { background: linear-gradient(135deg, #2f7f87, #4ba3a9); }
+.sello-3 { background: linear-gradient(135deg, #5a6349, #7a8265); }
+.sello-4 { background: linear-gradient(135deg, #a84820, #c25a1c); }
+.sello-5 { background: linear-gradient(135deg, #246269, #2f7f87); }
+.sello-6 { background: linear-gradient(135deg, #8b5e2e, #a67a3c); }
+.sello-7 { background: linear-gradient(135deg, #704e8e, #8c6ab0); }
+.sello-8 { background: linear-gradient(135deg, #556b2f, #778e4a); }
+
+/* ========== MAPA DE TAPROOMS ========== */
+.map-wrap {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 32px;
+  margin-top: 32px;
+}
+@media (max-width: 920px) { .map-wrap { grid-template-columns: 1fr; } }
+#map {
+  height: 500px;
+  min-height: 400px;
+  border-radius: 14px;
+  overflow: hidden;
+  box-shadow: var(--shadow-lg);
+  border: 1px solid var(--rule);
+  z-index: 1;
+}
+.taproom-list {
+  max-height: 500px;
+  overflow-y: auto;
+  padding-right: 8px;
+}
+@media (max-width: 920px) { .taproom-list { max-height: none; } }
+.taproom-list::-webkit-scrollbar { width: 6px; }
+.taproom-list::-webkit-scrollbar-track { background: var(--bg-alt); border-radius: 3px; }
+.taproom-list::-webkit-scrollbar-thumb { background: var(--rule); border-radius: 3px; }
+.taproom-item {
+  background: var(--surface);
+  border: 1px solid var(--rule);
+  border-radius: 10px;
+  padding: 16px 18px;
+  margin-bottom: 10px;
+  cursor: pointer;
+  transition: border-color 0.15s, transform 0.15s;
+}
+.taproom-item:hover { border-color: var(--accent); transform: translateX(2px); }
+.taproom-item.active { border-color: var(--accent); background: linear-gradient(to right, rgba(194,90,28,0.05), transparent); }
+.taproom-name {
+  font-family: 'Fraunces', Georgia, serif;
+  font-weight: 600;
+  font-size: 17px;
+  color: var(--ink);
+  margin: 0 0 4px;
+}
+.taproom-addr {
+  font-size: 13px;
   color: var(--muted);
-  text-align: center;
+  margin: 0 0 6px;
+}
+.taproom-note {
+  font-size: 13px;
+  color: var(--ink-soft);
+  margin: 0;
+  line-height: 1.4;
+}
+.leaflet-popup-content-wrapper {
+  border-radius: 10px;
+  font-family: 'Inter', sans-serif;
+}
+.leaflet-popup-content { margin: 12px 16px; font-size: 13px; }
+.leaflet-popup-content b {
+  font-family: 'Fraunces', Georgia, serif;
+  font-size: 15px;
+  display: block;
+  margin-bottom: 4px;
+  color: var(--ink);
 }
 
-@media (max-width: 600px) {
-  h1 { font-size: 28px; }
-  .card { padding: 16px 18px; }
+/* ========== TIMELINE ========== */
+.timeline {
+  position: relative;
+  padding-left: 40px;
+  margin-top: 32px;
+}
+.timeline::before {
+  content: '';
+  position: absolute;
+  left: 10px;
+  top: 10px;
+  bottom: 10px;
+  width: 2px;
+  background: linear-gradient(to bottom, var(--accent-soft), var(--rule));
+}
+.milestone {
+  position: relative;
+  padding-bottom: 32px;
+}
+.milestone::before {
+  content: '';
+  position: absolute;
+  left: -34px;
+  top: 6px;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: var(--surface);
+  border: 3px solid var(--accent);
+  box-shadow: 0 0 0 4px var(--bg-alt);
+}
+.milestone-year {
+  font-family: 'Fraunces', Georgia, serif;
+  font-weight: 700;
+  font-size: 22px;
+  color: var(--accent);
+  margin-bottom: 6px;
+  display: block;
+}
+.milestone-title {
+  font-family: 'Fraunces', Georgia, serif;
+  font-weight: 600;
+  font-size: 17px;
+  color: var(--ink);
+  margin: 0 0 6px;
+}
+.milestone-text {
+  font-size: 14px;
+  color: var(--ink-soft);
+  margin: 0;
+  line-height: 1.6;
+}
+
+/* ========== EVENTOS ========== */
+.event-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 20px;
+  margin-top: 32px;
+}
+.event-card {
+  background: var(--surface);
+  border: 1px solid var(--rule);
+  border-radius: 14px;
+  padding: 28px;
+  position: relative;
+  overflow: hidden;
+}
+.event-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: linear-gradient(90deg, var(--accent), var(--amber));
+}
+.event-when {
+  font-size: 12px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--teal);
+  font-weight: 600;
+  margin-bottom: 8px;
+}
+.event-name {
+  font-family: 'Fraunces', Georgia, serif;
+  font-weight: 700;
+  font-size: 22px;
+  color: var(--ink);
+  margin: 0 0 12px;
+  line-height: 1.2;
+}
+.event-text {
+  font-size: 14px;
+  color: var(--ink-soft);
+  line-height: 1.5;
+  margin: 0;
+}
+
+/* ========== CTA GRANDE IG ========== */
+.cta-ig {
+  background: linear-gradient(135deg, var(--accent) 0%, #a4480f 100%);
+  color: #fff;
+  text-align: center;
+  padding: clamp(60px, 10vw, 100px) 24px;
+}
+.cta-ig h2 {
+  font-family: 'Fraunces', Georgia, serif;
+  font-weight: 700;
+  font-size: clamp(28px, 4.5vw, 42px);
+  line-height: 1.1;
+  margin: 0 0 16px;
+  color: #fff;
+  letter-spacing: -0.02em;
+}
+.cta-ig p {
+  font-family: 'Fraunces', Georgia, serif;
+  font-size: clamp(16px, 2vw, 19px);
+  color: rgba(255,255,255,0.9);
+  margin: 0 auto 32px;
+  max-width: 50ch;
+  line-height: 1.5;
+}
+.cta-ig .btn-ig {
+  background: #fff;
+  color: var(--accent) !important;
+  padding: 16px 32px;
+  font-size: 16px;
+}
+.cta-ig .btn-ig:hover { background: #fff8f0; transform: translateY(-2px); }
+
+/* ========== APORTA ========== */
+.aporta-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 32px;
+  margin-top: 32px;
+}
+@media (max-width: 760px) { .aporta-grid { grid-template-columns: 1fr; } }
+.aporta-card {
+  background: var(--surface);
+  border: 1px solid var(--rule);
+  border-radius: 14px;
+  padding: 32px;
+}
+.aporta-card h3 {
+  font-family: 'Fraunces', Georgia, serif;
+  font-weight: 700;
+  font-size: 22px;
+  margin: 0 0 12px;
+  color: var(--ink);
+}
+.aporta-card ul { padding-left: 20px; margin: 0 0 20px; color: var(--ink-soft); }
+.aporta-card li { margin-bottom: 6px; font-size: 14px; }
+
+/* ========== FOOTER ========== */
+footer {
+  background: var(--bg-alt);
+  padding: 48px 0 32px;
+  border-top: 1px solid var(--rule);
+}
+.footer-inner {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 clamp(16px, 4vw, 32px);
+}
+.footer-top {
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 24px;
+  margin-bottom: 32px;
+  padding-bottom: 32px;
+  border-bottom: 1px solid var(--rule);
+}
+.footer-brand { display: flex; align-items: center; gap: 12px; }
+.footer-brand img { width: 48px; height: 48px; }
+.footer-brand strong {
+  font-family: 'Fraunces', Georgia, serif;
+  font-size: 18px;
+  display: block;
+  color: var(--ink);
+}
+.footer-brand span { font-size: 12px; color: var(--muted); }
+.footer-social { display: flex; gap: 12px; }
+.footer-social a {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: var(--surface);
+  border: 1px solid var(--rule);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--ink-soft);
+  transition: all 0.15s;
+}
+.footer-social a:hover { background: var(--accent); color: #fff; border-color: var(--accent); }
+.footer-social svg { width: 20px; height: 20px; }
+.footer-text {
+  font-size: 12px;
+  color: var(--muted);
+  line-height: 1.6;
+  text-align: center;
+}
+.footer-text a { color: var(--muted); text-decoration: underline; }
+.footer-text a:hover { color: var(--accent); }
+
+/* ========== VISTA ACTIVA DE ANCLAS ========== */
+section[id] { scroll-margin-top: 80px; }
+
+/* ========== DECORACIÓN BARRA DE COLORES ========== */
+.color-band {
+  height: 4px;
+  background: linear-gradient(90deg, #d7c9a3 0 20%, #a8d2d1 20% 40%, #e07c3f 40% 65%, #6c6b58 65% 100%);
+}
+
+/* Oculto en móviles de la lista scroll */
+@media (max-width: 920px) {
+  .taproom-list { max-height: none; overflow-y: visible; }
 }
 </style>
 </head>
 <body>
-<div class="band"></div>
-<div class="wrap">
 
-<header class="hero">
-<p class="kicker">Deep research · Charlas y Chelas</p>
-<h1>Mapa del ecosistema cervecero artesanal de Yucatán</h1>
-<p class="subtitle">Veinticinco productores verificables, treinta proyectos caseros estimados y una escena que pasó de una sola marca en 2012 a tener su primer festival estatal en 2026.</p>
-<p class="meta">Octubre de 2026 · Informe de investigación</p>
+<!-- ========== HEADER ========== -->
+<header class="site-header">
+  <div class="header-inner">
+    <a href="#top" class="brand">
+      <img src="img/logo.png" alt="Inexpertos Cerveceros">
+      <div class="brand-text">
+        <strong>Cerveza Yucatán</strong>
+        <span>Por Inexpertos Cerveceros</span>
+      </div>
+    </a>
+    <button class="hamburger" onclick="document.querySelector('.nav').classList.toggle('open')" aria-label="Menú">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12h18M3 6h18M3 18h18"/></svg>
+    </button>
+    <nav class="nav">
+      <a href="#panorama">Panorama</a>
+      <a href="#cerveceras">Cerveceras</a>
+      <a href="#taprooms">Dónde probar</a>
+      <a href="#historia">Historia</a>
+      <a href="#eventos">Eventos</a>
+      <a href="https://www.instagram.com/inexpertoscerveceros/" target="_blank" rel="noopener" class="nav-ig">
+        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z"/></svg>
+        Síguenos
+      </a>
+    </nav>
+  </div>
 </header>
 
-<div class="tldr">
-<h2>TL;DR</h2>
-<ul>
-<li><strong>Tamaño y estructura:</strong> Yucatán pasó de 1 cervecería artesanal en 2012 (Ceiba) a 10 marcas en 2021 y a más de 20 productores identificables en 2026. Solo Ceiba, Patito y Mastache operan con fermentadores de mil litros; el resto produce 300–500 L al mes. Hay además unos 30 proyectos caseros, según la estimación del cervecero Alex Osorio.</li>
-<li><strong>Quién domina:</strong> Patito (desde 2014–2015, con ~20,000 L mensuales) y Ceiba (pionera, 2012) son las marcas de mayor distribución. La generación premiada de 2018–2021 la forman Thodes, Casa Pinillos, Mastache, Esmeralda y Fervor. La ola 2023–2026 incluye Memento Mori, Sin Filtro, Nicté y Verdina.</li>
-<li><strong>Vacíos documentales:</strong> no hay evidencia pública verificable de los proyectos <em>Lupnáticos</em> ni de una <em>Barbarita</em> yucateca; probablemente son colectivos caseros sin huella web. Taberna Montejo figura como "cerrada permanentemente" en agregadores, sin confirmación en prensa.</li>
-</ul>
-</div>
+<!-- ========== HERO ========== -->
+<section class="hero" id="top">
+  <div class="hero-inner">
+    <span class="hero-eyebrow">Yucatán · 2026</span>
+    <h1>La cerveza <em>artesanal</em><br>de Yucatán, en un solo mapa</h1>
+    <p class="hero-sub">
+      Veinticinco cerveceras, once taprooms, siglo y medio de historia chelera. Hecho a mano por la gente de Inexpertos Cerveceros para quienes quieren probar, aprender y perderse en la escena local.
+    </p>
+    <div class="hero-ctas">
+      <a href="#taprooms" class="btn btn-primary">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>
+        Dónde probar hoy
+      </a>
+      <a href="https://www.instagram.com/inexpertoscerveceros/" target="_blank" rel="noopener" class="btn btn-secondary">
+        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z"/></svg>
+        Síguenos en Instagram
+      </a>
+    </div>
+  </div>
+  <div class="hero-scroll">Desliza ↓</div>
+</section>
 
-<h2>1. Resumen ejecutivo</h2>
+<div class="color-band"></div>
 
-<h4>Número total</h4>
-<p>El inventario tiene cuatro capas:</p>
-<ul>
-<li><strong>25 productores con evidencia de que operan o operaron en Yucatán.</strong> 22 marcas activas o con actividad reciente y 3 extintas o cerradas (Rústica, Ciudad Blanca, Bacab). Hay además venues cerrados: Nación Brava, Malta y probablemente Taberna Montejo. Marcas añadidas tras cruzar fuentes: <strong>Cerveza Villamil</strong> y <strong>Milos Brew</strong> (Reforma, nov. 2023) y <strong>Cervecería Bacab</strong> (ponencia académica, fundada 2023; cerró entre 2025 y oct. 2026). Mención aparte: el 17 de octubre de 2026, <strong>Falling Piano Brewing Co.</strong> (CDMX, 2018) toma el local completo con toda la fábrica de Bacab y arranca producción en Mérida — primera marca artesanal foránea que <em>produce</em> dentro de Yucatán, no solo distribuye.</strong></li>
-<li><strong>Unas 10 marcas que aparecen en festivales locales sin origen confirmado.</strong></li>
-<li><strong>Dos marcas de la lista inicial sin verificar</strong> (Lupnáticos, Barbarita).</li>
-<li><strong>Unos 30 proyectos caseros sin huella pública</strong>, según la estimación de Alex Osorio en Reforma.</li>
-</ul>
+<!-- ========== PANORAMA + CIFRAS ========== -->
+<section id="panorama">
+  <div class="container">
+    <span class="section-eyebrow">El panorama</span>
+    <h2 class="section-title">De una sola cervecería <em>a toda una escena</em></h2>
+    <p class="section-sub">En 2012 había una. Hoy hay veinticinco productores locales, un festival estatal y hasta marcas de fuera que vienen a instalar planta aquí.</p>
+    <div class="stats">
+      <div class="stat-card">
+        <span class="stat-num">25</span>
+        <span class="stat-label"><strong>Cerveceras locales</strong> documentadas en el inventario</span>
+      </div>
+      <div class="stat-card">
+        <span class="stat-num">11+</span>
+        <span class="stat-label"><strong>Taprooms y jardines</strong> cerveceros en Mérida</span>
+      </div>
+      <div class="stat-card">
+        <span class="stat-num">1896</span>
+        <span class="stat-label"><strong>Año del primer tarro</strong>: Gran Cervecería Yucateca</span>
+      </div>
+      <div class="stat-card">
+        <span class="stat-num">80 L</span>
+        <span class="stat-label"><strong>Consumo per cápita</strong> al año en Yucatán (2021)</span>
+      </div>
+    </div>
+  </div>
+</section>
 
-<h4>Crecimiento histórico</h4>
-<ul>
-<li><strong>Antecedentes industriales (fuentes contradictorias).</strong> José María Ponce Solís — hacendado henequenero diversificado en hielo (Quinta El Perejil), dulces (Ambrosía) y chocolates — funda la <strong>Gran Cervecería Yucateca en 1896</strong>, con las etiquetas La Estrella, El Conejo y La Mestiza (Beatriz Torres Góngora, 2005). En 1900 constituye Cervecería Yucateca S.A., que lanza <strong>Carta Clara, León Negra, Montejo y Cerveza de Barril</strong>. El 15 de agosto de 1951 inaugura su nueva planta en Chuminopolis. <em>Grupo Reforma (2023) data la fundación en 1886 y la compra de Modelo en 1970; Torres (2005) y la ponencia académica de la Dra. Venus Estrella dan 1896 y 1980. Las fuentes académicas tienen más peso, pero la contradicción queda registrada.</em></li>
-<li><strong>Cronología de salida del mercado yucateco:</strong> 1980 (venta a Grupo Modelo), 1995 (relanzamiento de Carta Clara), 1999 (cambio de fórmula y etiqueta de Montejo y León Negra), 2002 (cierre de la planta yucateca original), 2017 (inauguración de la planta de Hunucmá con inversión de $8,500M), 2021 (desaparición de la marca Carta Clara).</li>
-<li><strong>Cultura del beisbol y las cantinas.</strong> El <strong>Parque Carta Clara se inauguró el 5 de febrero de 1953</strong> y fue casa de los Leones de Yucatán hasta 1981, cuando se mudaron al Kukulcán. Primer campeonato: 1957. (<em>Reforma data el estadio en 1949; Torres, 2005, da 1953.</em>) Los botaneros o cantinas, con más de un siglo de tradición, aportan al consumo per cápita yucateco de 80 L (2021). Un referente actual es El Lucero (Calle 46 esq. 47) en Mérida, donde cada ronda de chelas suma botanas de cocina local.</li>
-<li><strong>Dato social:</strong> el Sindicato de obreros, empleados, conexos y similares de la Cervecería Yucateca se constituyó el 25 de mayo de 1934. Torres (2005) subraya la "continuidad generacional de los obreros" y la "preocupación por la desaparición de marcas locales" tras la compra de Modelo.</li>
-<li><strong>2010–2014: pioneros.</strong> Beer Box abrió en 2010 como primer establecimiento en vender cerveza importada y artesanal. Rústica (2012) fue la "precursora hoy extinta" que inspiró a Ceiba. Ceiba se fundó en 2012. Ciudad Blanca empezó hacia 2014.</li>
-<li><strong>2015: consolidación.</strong> Nacen <strong>Patito, Cuerno de Toro y Alux</strong>, según la cronología de la Dra. Venus Estrella basada en Torres (2005). Fuentes periodísticas datan a Alux "hacia 2014"; la fuente académica fija 2015.</li>
-<li><strong>2017: institucionalización.</strong> Se funda la <strong>Asociación de Cerveceros Artesanales de Yucatán A.C.</strong> (CAY), presidida por Ovidio Suárez.</li>
-<li><strong>2018: entran los premios.</strong> Thodes Brewery (abril) y Esmeralda Brewing.</li>
-<li><strong>2019:</strong> Mastache y Flappers. Casa Pinillos se establece en Mérida (venía de Monterrey, debut en el Festival Regio 2018). Dos Santos.</li>
-<li><strong>2020–2021: pandemia.</strong> Nación Brava cierra en marzo de 2020. Los confinamientos empujan la ola casera y a cuatro nuevos proyectos: <strong>Sin Filtro, Memento Mori, Milos Brew y Cerveza Villamil</strong> (todas 2020, según Estrella). Fervor arranca en 2021 y el taproom de Cuerno de Toro abre en agosto de 2021.</li>
-<li><strong>2023:</strong> arranca <strong>Cervecería Bacab</strong> (operó pocos años y cerró entre 2025 y oct. 2026). Memento Mori lanza sus etiquetas comerciales. Reforma publica su reportaje en noviembre.</li>
-<li><strong>2024–2025:</strong> Nicté (Untappd desde 2024) y Verdina (verano 2025).</li>
-<li><strong>2026:</strong> primera edición del <strong>Mérida Beer Fest</strong> (17–18 abril). El <strong>17 de octubre</strong>, <strong>Falling Piano Brewing Co.</strong> (CDMX, 2018) toma el local completo y la planta de Bacab y arranca producción en Mérida — primera marca artesanal foránea que produce dentro de Yucatán y primer traspaso documentado de infraestructura cervecera en el estado.</li>
-</ul>
+<!-- ========== INTRO EDITORIAL ========== -->
+<section class="section-alt">
+  <div class="container-narrow intro">
+    <span class="section-eyebrow">¿Qué está pasando?</span>
+    <h2 class="section-title">Una escena micro, pero <em>con carácter propio</em></h2>
+    <p>Yucatán cocina cerveza desde 1896, cuando José María Ponce fundó la Gran Cervecería Yucateca con La Estrella, El Conejo y La Mestiza. Más de un siglo después, cuando Grupo Modelo cerró la planta local en 2002, parecía que la historia cervecera del estado terminaba ahí. No terminó: diez años más tarde, en 2012, Carlos Jaime Heredia abrió Cerveza Ceiba y empezó una historia nueva.</p>
+    <p>Hoy el ecosistema tiene <strong>tres marcas grandes</strong> con fermentadores de mil litros (Ceiba, Patito, Mastache) y una veintena de proyectos micro que producen entre 300 y 500 litros al mes. En la ola 2018–2021 llegaron Thodes, Esmeralda, Casa Pinillos, Mastache y Fervor. Entre 2020 y 2026 se sumaron Sin Filtro, Memento Mori, Villamil, Milos Brew, Nicté y Verdina.</p>
+    <p>El clima de 42 °C, la dureza del agua y la escasez de insumos obligan a los maestros cerveceros locales a inventar. El resultado: cervezas con naranja agria de Oxkutzcab, semilla de ramón, miel melipona, cáscara de carambola y chile ancho con cacao. Nada de recetas gringas copiadas: todo con sello yucateco.</p>
+    <p>Y en octubre de 2026 pasó algo nuevo: <strong>Falling Piano Brewing Co.</strong> (CDMX) tomó la planta de Bacab y arrancó producción en Mérida. Es la primera marca foránea que produce aquí. Señal de que la escena ya tiene gravedad propia.</p>
+  </div>
+</section>
 
-<h4>Tendencias clave</h4>
-<ol>
-<li><strong>Escala micro y nano.</strong> Casi todas las marcas yucatecas figuran en Untappd como "Nano Brewery". El cuello de botella es la distribución, no la producción. Malena Serrano, de Thodes: <span class="quote" style="display:inline;border:none;padding:0;margin:0">"Distribution has, from the beginning, been one of our biggest hurdles"</span>.</li>
-<li><strong>Del bar ajeno al taproom propio.</strong> Cuerno de Toro, Mastache (3 sedes), Esmeralda, Patito, Verdina y Sin Filtro ya venden directo. Thodes y Casa Pinillos siguen sin taproom.</li>
-<li><strong>Identidad local como diferenciador.</strong> Usan naranja agria (Esmeralda "Yucatán"), semilla de ramón, tabaco y miel (Alux), jamaica (Thodes Phelddagrif), carambola (gose de Casa Pinillos), miel melipona y nombres en maya (Nicté, Alux, La'Hach).</li>
-<li><strong>Profesionalización vía concursos.</strong> Thodes acumula al menos ocho premios nacionales. Casa Pinillos ganó segundo lugar en el Gran Concurso de Cerveceros Mexicanos (2020).</li>
-<li><strong>Mercado sensible al precio.</strong> Una artesanal cuesta 60 pesos o más, contra unos 20 de una industrial. En el taproom de Mastache en La Plancha, los precios van de $60 a $95.</li>
-</ol>
+<!-- ========== CERVECERAS ========== -->
+<section id="cerveceras">
+  <div class="container">
+    <span class="section-eyebrow">El inventario</span>
+    <h2 class="section-title">Las cerveceras <em>yucatecas</em></h2>
+    <p class="section-sub">Veintidós marcas activas o con actividad reciente, agrupadas por ciudad. Toca el Instagram de cada una para conocer su catálogo completo.</p>
 
-<h2>2. Cervecerías activas</h2>
+    <!-- MÉRIDA -->
+    <div class="city-group">
+      <h3 class="city-name">Mérida <span>— 20 cerveceras y la planta de una foránea</span></h3>
+      <div class="brewery-grid">
 
-<div class="region">Mérida</div>
+        <article class="brewery">
+          <div class="brewery-head">
+            <div class="brewery-sello sello-1">Ce</div>
+            <div>
+              <h4 class="brewery-name">Cerveza Ceiba</h4>
+              <div class="brewery-meta"><span class="status-dot status-active"></span>Fundada 2012 · Pionera</div>
+            </div>
+          </div>
+          <p class="brewery-blurb">La primera artesanal yucateca. Fundada por Carlos Jaime Heredia en una fábrica reconvertida. Maestro cervecero: Carlos Jaime Gómory.</p>
+          <div class="brewery-tags">
+            <span class="brewery-tag">Pilsner</span><span class="brewery-tag">Vienna</span><span class="brewery-tag">Imperial Stout</span><span class="brewery-tag">IPA</span>
+          </div>
+          <div class="brewery-links">
+            <a href="https://www.instagram.com/cervezaceiba/" target="_blank" rel="noopener" class="brewery-link">@cervezaceiba →</a>
+          </div>
+        </article>
 
-<div class="card">
-<h3>Cerveza Ceiba <span class="tag">Activa</span></h3>
-<ul>
-<li><strong>Fundación:</strong> 2012. Varias fuentes la llaman "la primera hecha de manera artesanal en Yucatán" (matizar: Rústica es anterior).</li>
-<li><strong>Fundador:</strong> Lic. Carlos Alfonso Jaime Heredia. Convirtió su fábrica de colchones en microcervecería y conservó personal, en su mayoría mujeres.</li>
-<li><strong>Maestro cervecero:</strong> Carlos Jaime Gómory.</li>
-<li><strong>Ubicación:</strong> Yucatán Today da Calle 36 #187 x 15 y 17, San Damián. MID CityBeat y Sipse ubican la planta en García Ginerés. Posible mudanza entre ambas direcciones; dato por confirmar.</li>
-<li><strong>Estilos:</strong> Dorada Premium, Ámbar Mestiza, Imperial Stout e IPA. 32 cervezas registradas en Untappd, entre ellas Malix (NEIPA), Pavo de Monte (Saison), Honey Irish Red y "Cheva Gallos" (IPA para Salón Gallos).</li>
-<li><strong>Capacidad:</strong> Sipse (2021) reporta 26,208 L/semana y 11 empleados. La cifra parece alta frente a la caracterización de "micro" de Osorio.</li>
-<li><strong>Asociaciones:</strong> única firma yucateca afiliada a Cerveceros de México, según su directora.</li>
-<li><strong>Redes:</strong> IG @cervezaceiba · FB Cerveza Ceiba · cervezaceiba.com · info@cervezaceiba.com</li>
-<li><strong>Puntos de venta:</strong> "casi todos los restaurantes de Mérida", Beer Box, Beer Company, Raíces, Bird Tap y otros estados.</li>
-<li><strong>Datos interesantes:</strong> Primera parada del Turibus Cervecero. Participó en el Mérida Beer Fest 2026.</li>
-</ul>
-</div>
+        <article class="brewery">
+          <div class="brewery-head">
+            <div class="brewery-sello sello-4">Pa</div>
+            <div>
+              <h4 class="brewery-name">Cerveza Patito</h4>
+              <div class="brewery-meta"><span class="status-dot status-active"></span>Fundada 2015 · ~20 000 L/mes</div>
+            </div>
+          </div>
+          <p class="brewery-blurb">La primera yucateca artesanal en lata. Casa cervecera Hermana República en Xcanatún. Maestro cervecero: Gerardo Cárdenas.</p>
+          <div class="brewery-tags">
+            <span class="brewery-tag">Lager Yucateca</span><span class="brewery-tag">IPA</span><span class="brewery-tag">Belgian Blonde</span><span class="brewery-tag">Porter Vainilla</span>
+          </div>
+          <div class="brewery-links">
+            <a href="https://www.instagram.com/cervezapatito/" target="_blank" rel="noopener" class="brewery-link">@cervezapatito →</a>
+          </div>
+        </article>
 
-<div class="card">
-<h3>Cerveza Patito / Hermana República / Parque Patito <span class="tag">Activa</span></h3>
-<ul>
-<li><strong>Fundación:</strong> MID CityBeat dice 2014; la marca y Yucatán Today dan enero de 2015 (nacimiento de Hermana República). Reforma confirma 2015 como año de la "primera yucateca artesanal en lata".</li>
-<li><strong>Maestro cervecero:</strong> Gerardo Cárdenas (confirmado por Reforma, nov. 2023).</li>
-<li><strong>Personas clave:</strong> Nicolás Madahuar Bohem, José Antonio Millet y David Ortiz (anfitriones de la apertura de Av. Colón, dic. 2018). Gabriel Méndez Alfaro fue director comercial de Patito y después cofundador de Esmeralda.</li>
-<li><strong>Ubicación:</strong> Planta y Hermana República Xcanatún (Carr. Mérida–Progreso km 12.8). Otras sedes: Hermana República Av. Colón, Victory Platz y Casa Patito en el Mercado Gastronómico de La Plancha (10 canillas).</li>
-<li><strong>Estilos:</strong> Lager Yucateca, Pilsner, IPA, Belgian Blonde Ale, APA, Dry Stout, Hefeweizen, Helles, Porter Vainilla e Indian Brown Ale. Ediciones especiales cada 3 o 4 meses; vende en lata y barril.</li>
-<li><strong>Capacidad:</strong> 19,000 L (MID CityBeat); "alrededor de 20 mil litros mensuales" según Periodismo desde la Barra (abril de 2020).</li>
-<li><strong>Distribución:</strong> supermercados de la península, puntos de venta en todo México y exportación a EE. UU. (Back Alley Imports).</li>
-<li><strong>Parque Patito:</strong> terraza y jardín cervecero junto a la planta. Sigue activo: Facebook anunció un "Domingo de Rock" para el 18 de enero de 2026.</li>
-<li><strong>Redes:</strong> IG @cervezapatito · FB CervezaPatito · FB biergartenpatito · cervezapatito.com</li>
-<li><strong>Participó en el Mérida Beer Fest 2026.</strong></li>
-</ul>
-</div>
+        <article class="brewery">
+          <div class="brewery-head">
+            <div class="brewery-sello sello-6">CT</div>
+            <div>
+              <h4 class="brewery-name">Cuerno de Toro</h4>
+              <div class="brewery-meta"><span class="status-dot status-active"></span>Fundada 2015 · Taproom en Santa Lucía</div>
+            </div>
+          </div>
+          <p class="brewery-blurb">De Ovidio Suárez y Betty Ancona. Planta en Conkal, taproom con hasta 50 sabores. Preside la Asociación de Cerveceros de Yucatán.</p>
+          <div class="brewery-tags">
+            <span class="brewery-tag">Cream Ale</span><span class="brewery-tag">Mexican IPA</span><span class="brewery-tag">Oatmeal Stout</span><span class="brewery-tag">Red Ale</span>
+          </div>
+          <div class="brewery-links">
+            <a href="https://www.instagram.com/cervezacuernodetoro/" target="_blank" rel="noopener" class="brewery-link">@cervezacuernodetoro →</a>
+          </div>
+        </article>
 
-<div class="card">
-<h3>Cerveza Cuerno de Toro (y taproom) <span class="tag">Activa</span></h3>
-<ul>
-<li><strong>Fundación:</strong> 2015.</li>
-<li><strong>Fundadores:</strong> Ovidio Suárez León (maestro cervecero y ganadero tabasqueño) y la chef Beatriz "Betty" Ancona. Empezaron cocinando 15 L por bimestre de Titán. El nombre homenajea a la cría de cebú.</li>
-<li><strong>Planta:</strong> bodega en Conkal, 800 L al mes.</li>
-<li><strong>Taproom:</strong> Calle 64 #461 x 55, Parque Santa Lucía, Centro. Abrió el 6 de agosto de 2021 con hasta 50 sabores. 8 canillas en 2025.</li>
-<li><strong>Estilos:</strong> Joya (Cream Ale), Emperador (Mexican IPA), Tormento (Imperial Red Ale), Titán (Oatmeal Stout). Experimentales: La Diabla, Rocketman, Torino (tiramisú porter), Britania (DDH NEIPA), Carmela (peanut butter cup brown).</li>
-<li><strong>Redes:</strong> IG @cervezacuernodetoro · IG @cuernodetoro.taproom · cervezacuernodetoro@gmail.com</li>
-<li><strong>Dato:</strong> Ovidio Suárez preside la Asociación de Cerveceros Artesanales de Yucatán (CAY).</li>
-<li>Participó en el Mérida Beer Fest 2026.</li>
-</ul>
-</div>
+        <article class="brewery">
+          <div class="brewery-head">
+            <div class="brewery-sello sello-3">Th</div>
+            <div>
+              <h4 class="brewery-name">Thodes Brewery</h4>
+              <div class="brewery-meta"><span class="status-dot status-active"></span>Fundada 2018 · 8+ premios nacionales</div>
+            </div>
+          </div>
+          <p class="brewery-blurb">De César Sosa y Malena Serrano. Nombres mitológicos y nórdicos. Segundo lugar en el Gran Concurso de Cerveceros Mexicanos 2020.</p>
+          <div class="brewery-tags">
+            <span class="brewery-tag">Session IPA</span><span class="brewery-tag">Honey Blonde</span><span class="brewery-tag">Imperial Stout</span><span class="brewery-tag">Jamaica Ale</span>
+          </div>
+          <div class="brewery-links">
+            <a href="https://www.instagram.com/thodes.brewery/" target="_blank" rel="noopener" class="brewery-link">@thodes.brewery →</a>
+          </div>
+        </article>
 
-<div class="card">
-<h3>Thodes Brewery (antes Thodes Ale) <span class="tag">Activa</span></h3>
-<ul>
-<li><strong>Fundación:</strong> 2018. Primeras ventas en abril de 2018.</li>
-<li><strong>Fundadores:</strong> César "Thodes" Sosa Solís (fundador y cervecero) y su esposa Malena Serrano (operaciones). Empezó con un kit casero en una olla tamalera en casa de su padre.</li>
-<li><strong>Tipo:</strong> nanocervecería, sin taproom propio.</li>
-<li><strong>Capacidad:</strong> ~2,000 litros al mes.</li>
-<li><strong>Cervezas:</strong> Fenrir (Session IPA), Valkiria (Honey Blonde), Shieldmaiden (Mexican Imperial Stout), Pheldagriff (Jamaica Blonde Ale). Otras: Medusa (gose de frambuesa), Loki, Ragnar, Guerrero, Amazonas, Cerberus, Oblivion, Hopzilla, HopBusters, Mantícora. En Untappd: 76 cervezas, 1,707 calificaciones, promedio 3.74.</li>
-<li><strong>Premios:</strong> al menos ocho premios nacionales. Segundo lugar en el 5.º Gran Concurso de Cerveceros Mexicanos (2020) con una Mexican Breakfast Imperial Stout.</li>
-<li><strong>Colaboraciones:</strong> "Kinich Aniversario 31" y "32" (NEIPA) con el Restaurante Kinich de Izamal.</li>
-<li><strong>Puntos de venta:</strong> Bird Tap, El Garage, Beer Box Campestre, Raíces, Beershooter, Taninos para Todos, Hop Experience. Fuera de Mérida: Idilio (Valladolid), Kinich (Izamal), Cancún y Playa del Carmen.</li>
-<li><strong>Redes:</strong> IG @thodes.brewery · thodes.beer · quiero@thodes.beer · 991 118 8979</li>
-</ul>
-</div>
+        <article class="brewery">
+          <div class="brewery-head">
+            <div class="brewery-sello sello-2">Ma</div>
+            <div>
+              <h4 class="brewery-name">Cervecería Mastache</h4>
+              <div class="brewery-meta"><span class="status-dot status-active"></span>Fundada 2019 · 3 sedes</div>
+            </div>
+          </div>
+          <p class="brewery-blurb">De Jesús Ramírez, con un flamingo como imagen. Taproom con ~30 canillas en San Ramón Norte y presencia en La Plancha y Ciudad Caucel.</p>
+          <div class="brewery-tags">
+            <span class="brewery-tag">11 estilos de línea</span><span class="brewery-tag">Sours</span><span class="brewery-tag">Rye Lager</span>
+          </div>
+          <div class="brewery-links">
+            <a href="https://www.instagram.com/taproommastache/" target="_blank" rel="noopener" class="brewery-link">@taproommastache →</a>
+          </div>
+        </article>
 
-<div class="card">
-<h3>Cervecería Mastache <span class="tag">Activa</span></h3>
-<ul>
-<li><strong>Fundación:</strong> 2019.</li>
-<li><strong>Maestro cervecero:</strong> Jesús Ramírez. Su imagen es un flamenco.</li>
-<li><strong>Sedes:</strong> Taproom Mastache (Av. Cámara de Comercio 263, San Ramón Norte, ~30 canillas, desde 2023); Jardín Mastache (Calle 70 #695, Ciudad Caucel); Mastache La Plancha (solo botella).</li>
-<li><strong>Estilos:</strong> 11 de línea (Ultra, American Lager, Vienna, Pilsner, Blonde, Pale Ale, IPA, Red, Stout, NEIPA). Experimentales: Mangomita Sour, Jamaica Lager, Rye Lager. 58 cervezas en Untappd.</li>
-<li><strong>Capacidad:</strong> uno de los "tres grandes" con fermentadores de mil litros.</li>
-<li><strong>Redes:</strong> IG @cerveceriamastache · IG @taproommastache · cerveceriamastache.com · marketing@cerveceriamastache.com.mx</li>
-<li>Participó en el Mérida Beer Fest 2026.</li>
-</ul>
-</div>
+        <article class="brewery">
+          <div class="brewery-head">
+            <div class="brewery-sello sello-5">Es</div>
+            <div>
+              <h4 class="brewery-name">Esmeralda Brewing</h4>
+              <div class="brewery-meta"><span class="status-dot status-active"></span>Fundada 2018 · Sedes en Mérida, Progreso, Valladolid</div>
+            </div>
+          </div>
+          <p class="brewery-blurb">De los hermanos Méndez. Nombre tomado de la Costa Esmeralda yucateca. Creó la cerveza "Yucatán" con naranja agria para SEFOTUR.</p>
+          <div class="brewery-tags">
+            <span class="brewery-tag">APA</span><span class="brewery-tag">Tropical Ale</span><span class="brewery-tag">Oatmeal Stout</span><span class="brewery-tag">Citrus Pale Ale</span>
+          </div>
+          <div class="brewery-links">
+            <a href="https://www.instagram.com/esmeraldabrewing/" target="_blank" rel="noopener" class="brewery-link">@esmeraldabrewing →</a>
+          </div>
+        </article>
 
-<div class="card">
-<h3>Esmeralda Brewing <span class="tag">Activa</span></h3>
-<ul>
-<li><strong>Fundación:</strong> 2018. Nombre tomado de la "Costa Esmeralda" yucateca.</li>
-<li><strong>Fundadores:</strong> los hermanos Méndez. Gabriel Méndez Alfaro (exdirector comercial de Patito) murió durante la pandemia; la fundación Limpiemos Yucatán GMA lleva su nombre.</li>
-<li><strong>Estilos:</strong> Celestún (APA), Colorada (Tropical Ale), Oasis (Oatmeal Stout), Yucatán (Citrus Pale Ale con naranja agria, creada con SEFOTUR para el Tianguis Turístico 2021). Honey Blonde en colaboración con Miel Nativa Kaban.</li>
-<li><strong>Taprooms y bares:</strong> Esmeralda Taproom en La Plancha (4 canillas); El Cambay Bar (Calle 37 #500B, Santa Ana); Bird Tap. Sedes en Mérida, Progreso y Valladolid.</li>
-<li><strong>Redes:</strong> IG @esmeraldabrewing · IG @elcambaybar · esmeraldabrewing.com · contacto@esmeraldabrewing.com</li>
-</ul>
-</div>
+        <article class="brewery">
+          <div class="brewery-head">
+            <div class="brewery-sello sello-7">CP</div>
+            <div>
+              <h4 class="brewery-name">Casa Pinillos</h4>
+              <div class="brewery-meta"><span class="status-dot status-active"></span>Fundada 2018 · Gran Concurso 2020</div>
+            </div>
+          </div>
+          <p class="brewery-blurb">De Eduardo Martínez y Carén Sánchez. Creadores de la primera Ultra yucateca artesanal. Microlotes y cervezas de temporada.</p>
+          <div class="brewery-tags">
+            <span class="brewery-tag">Ultra Light Lager</span><span class="brewery-tag">Schwarzbier</span><span class="brewery-tag">Märzen</span><span class="brewery-tag">Gose de carambola</span>
+          </div>
+          <div class="brewery-links">
+            <a href="https://www.facebook.com/casapinillosbrewing" target="_blank" rel="noopener" class="brewery-link">Casa Pinillos →</a>
+          </div>
+        </article>
 
-<div class="card">
-<h3>Casa Pinillos Brewing Company <span class="tag">Activa</span></h3>
-<ul>
-<li><strong>Fundación:</strong> proyecto nacido en Monterrey. Debutó en el Festival Regio de 2018 y se estableció en Mérida en 2019.</li>
-<li><strong>Fundadores:</strong> Eduardo Martínez de Pinillos (producción) y Carén Sánchez (ventas). Él viene de Nestlé y Oxxo.</li>
-<li><strong>Estilos:</strong> creadora de "la primera Ultra yucateca artesanal". Ultra Light Lager, American Blonde, English Dark Mild, Session IPA, Schwarzbier, East Coast APA, Italian Pils, Gose de carambola, Märzen (Oktoberfest), Eisbock de aniversario e hidromiel con jamaica. 36 productos en Untappd.</li>
-<li><strong>Premios:</strong> en el Gran Concurso de Cerveceros Mexicanos (2020), segundo lugar con su American Light Lager; mención honorífica para su Session IPA y Gose.</li>
-<li><strong>Puntos de venta:</strong> sin taproom propio. En bares de cerveza y en Proyecto Casa 459.</li>
-<li><strong>Redes:</strong> FB casapinillosbrewing · Untappd casapinillosbrewing · epinillos.wixsite.com/casapinillosbrewing</li>
-</ul>
-</div>
+        <article class="brewery">
+          <div class="brewery-head">
+            <div class="brewery-sello sello-4">Fe</div>
+            <div>
+              <h4 class="brewery-name">Cervecería Fervor</h4>
+              <div class="brewery-meta"><span class="status-dot status-active"></span>Fundada 2021 · Nanocervecería</div>
+            </div>
+          </div>
+          <p class="brewery-blurb">Nanocervecería con fuerte catálogo lupulado. Hop Hydra, Fénix, Apóstol Ámbar. Se consigue en Bardo Taproom.</p>
+          <div class="brewery-tags">
+            <span class="brewery-tag">West Coast IPA</span><span class="brewery-tag">NZ IPA</span><span class="brewery-tag">Triple IPA</span><span class="brewery-tag">Smoked Imperial</span>
+          </div>
+        </article>
 
-<div class="card">
-<h3>Cervecería Fervor <span class="tag">Activa</span></h3>
-<ul>
-<li><strong>Fundación:</strong> 2021 (Untappd) o 2022 (RateBeer).</li>
-<li><strong>Tipo:</strong> nanocervecería. 39 cervezas en Untappd.</li>
-<li><strong>Estilos:</strong> West Coast IPA, Session IPA, Summer Ale, American Stout, Coffee &amp; Rum Porter, NZ IPA, Smoked Imperial Stout, Fénix (DIPA de aniversario), Hop Hydra (Triple IPA), Apóstol Ámbar.</li>
-<li><strong>Puntos de venta:</strong> Bardo Taproom y Taberna Montejo/TheBeerBox.</li>
-<li><strong>Redes:</strong> Untappd CervezaFervor.</li>
-<li>Participó en el Mérida Beer Fest 2026.</li>
-</ul>
-</div>
+        <article class="brewery">
+          <div class="brewery-head">
+            <div class="brewery-sello sello-3">MM</div>
+            <div>
+              <h4 class="brewery-name">Memento Mori</h4>
+              <div class="brewery-meta"><span class="status-dot status-active"></span>Etiquetas desde 2023</div>
+            </div>
+          </div>
+          <p class="brewery-blurb">De Javier Toledo y Manuel Martínez. Nombre latino "recuerdo de la mortalidad". Dos cervezas: Mort Aurean y Mort Tenebrae.</p>
+          <div class="brewery-tags">
+            <span class="brewery-tag">American Pale Ale</span><span class="brewery-tag">Stout</span>
+          </div>
+          <div class="brewery-links">
+            <a href="https://www.instagram.com/cerveza_mementomori/" target="_blank" rel="noopener" class="brewery-link">@cerveza_mementomori →</a>
+          </div>
+        </article>
 
-<div class="card">
-<h3>Memento Mori <span class="tag">Activa</span></h3>
-<ul>
-<li><strong>Fundación:</strong> proyecto empezado en 2020; etiquetas lanzadas en 2023.</li>
-<li><strong>Maestros cerveceros:</strong> Javier Toledo y Manuel Martínez.</li>
-<li><strong>Cervezas:</strong> Mort Aurean (American Pale Ale) y Mort Tenebrae (Stout).</li>
-<li><strong>Redes:</strong> IG @cerveza_mementomori</li>
-<li>Figura entre las diez marcas destacadas por Reforma (nov. 2023).</li>
-</ul>
-</div>
+        <article class="brewery">
+          <div class="brewery-head">
+            <div class="brewery-sello sello-6">Vi</div>
+            <div>
+              <h4 class="brewery-name">Cerveza Villamil</h4>
+              <div class="brewery-meta"><span class="status-dot status-active"></span>Fundada 2020</div>
+            </div>
+          </div>
+          <p class="brewery-blurb">De Alejandro Villamil. Recetas clásicas más experimentos con ingredientes locales: pepino, cacao, vainilla, chile ancho.</p>
+          <div class="brewery-tags">
+            <span class="brewery-tag">APA Aurora Boreal</span><span class="brewery-tag">Irish Red Cometa</span><span class="brewery-tag">Blonde con pepino</span><span class="brewery-tag">Stout con chile</span>
+          </div>
+          <div class="brewery-links">
+            <a href="https://www.instagram.com/cervezavillamil/" target="_blank" rel="noopener" class="brewery-link">@cervezavillamil →</a>
+          </div>
+        </article>
 
-<div class="card">
-<h3>Cerveza Villamil <span class="tag">Activa</span></h3>
-<ul>
-<li><strong>Fundación:</strong> 2020.</li>
-<li><strong>Maestro cervecero:</strong> Alejandro Villamil.</li>
-<li><strong>Cervezas de línea:</strong> Aurora Boreal (American Pale Ale) y Cometa (Irish Red Ale).</li>
-<li><strong>Experimentales:</strong> Pepino Espacial (Blonde Ale con pepino), Hércules (Stout con cacao, vainilla y chile ancho), HOAG (Cacao Cinnamon Coffee Stout). El estilo mezcla recetas clásicas con ingredientes "propositivos".</li>
-<li><strong>Puntos de venta:</strong> aparece en el menú de Taberna Montejo (TheBeerBox) y Bardo (registros en Untappd).</li>
-<li><strong>Redes:</strong> IG @cervezavillamil</li>
-<li>Incluida en la "decena para el destape" de Reforma.</li>
-</ul>
-</div>
+        <article class="brewery">
+          <div class="brewery-head">
+            <div class="brewery-sello sello-5">Mi</div>
+            <div>
+              <h4 class="brewery-name">Milos Brew</h4>
+              <div class="brewery-meta"><span class="status-dot status-active"></span>Fundada 2020</div>
+            </div>
+          </div>
+          <p class="brewery-blurb">Milos Brewing Company. Figura entre las diez marcas yucatecas destacadas por Reforma en 2023.</p>
+          <div class="brewery-tags">
+            <span class="brewery-tag">Porter de Olla</span><span class="brewery-tag">Amber Ale</span><span class="brewery-tag">Fruit Beer</span>
+          </div>
+        </article>
 
-<div class="card">
-<h3>Milos Brew (Milos Brewing Company) <span class="tag">Activa</span></h3>
-<ul>
-<li><strong>Fundación:</strong> 2020 (la etiqueta indica "EST. 2020").</li>
-<li><strong>Cervezas:</strong> Porter de Olla, Amber Ale, Fruit Beer y variantes de temporada.</li>
-<li><strong>Datos:</strong> aparece en la "decena para el destape" de Reforma como una de las marcas yucatecas a seguir. Catálogo completo y canales de venta pendientes de documentación.</li>
-<li><strong>Redes:</strong> buscar como @milosbrew / Milos Brewing Company (handle no verificado).</li>
-</ul>
-</div>
+        <article class="brewery">
+          <div class="brewery-head">
+            <div class="brewery-sello sello-8">SF</div>
+            <div>
+              <h4 class="brewery-name">Sin Filtro</h4>
+              <div class="brewery-meta"><span class="status-dot status-active"></span>Fundada 2020 · Jardín propio</div>
+            </div>
+          </div>
+          <p class="brewery-blurb">Nanocervecería con jardín cervecero en Mérida. "No gimmicks, no boring recipes, no corporate BS." Colabora con Charlas sin Filtro.</p>
+          <div class="brewery-tags">
+            <span class="brewery-tag">K-Brown</span><span class="brewery-tag">Notorious IPA</span><span class="brewery-tag">White Stout</span>
+          </div>
+        </article>
 
-<div class="card">
-<h3>Cervecería Sin Filtro <span class="tag">Activa</span></h3>
-<ul>
-<li><strong>Fundación:</strong> 2020.</li>
-<li><strong>Tipo:</strong> nanocervecería con Jardín Cervecero Sin Filtro en Calle 55 #968, Mérida.</li>
-<li><strong>Cervezas:</strong> K-Brown, Notorious I.P.A., White Stout y Happy. 10 en Untappd.</li>
-<li><strong>Lema:</strong> <em>"No gimmicks, no boring recipes, no corporate BS"</em>.</li>
-<li><strong>Puntos de venta:</strong> Idilio (Valladolid), El Dzalbay, Kibeer.</li>
-<li><strong>Colaboraciones:</strong> "Charlas sin Filtro" con Inexpertos Cerveceros.</li>
-<li>Participó en el Mérida Beer Fest 2026.</li>
-</ul>
-</div>
+        <article class="brewery">
+          <div class="brewery-head">
+            <div class="brewery-sello sello-7">Ni</div>
+            <div>
+              <h4 class="brewery-name">Cerveza Nicté</h4>
+              <div class="brewery-meta"><span class="status-dot status-active"></span>Planta con tours · Sibari Group</div>
+            </div>
+          </div>
+          <p class="brewery-blurb">Planta en Ciudad Industrial con tours de miércoles a viernes. Inspirada en la cultura maya; se vende en La Chaya Maya y Hilton.</p>
+          <div class="brewery-tags">
+            <span class="brewery-tag">IPA</span><span class="brewery-tag">Lager</span><span class="brewery-tag">Stout</span><span class="brewery-tag">Bikini Stout</span>
+          </div>
+          <div class="brewery-links">
+            <a href="https://www.instagram.com/cervezanicte/" target="_blank" rel="noopener" class="brewery-link">@cervezanicte →</a>
+          </div>
+        </article>
 
-<div class="card">
-<h3>Cerveza Nicté (Sibari Group) <span class="tag">Activa</span></h3>
-<ul>
-<li><strong>Ubicación:</strong> Calle 19 #470 x 26 y 38, Ciudad Industrial.</li>
-<li><strong>Tipo:</strong> planta con tours, catas y mini bar. Untappd la clasifica como "Regional Brewery".</li>
-<li><strong>Cervezas:</strong> Nicté IPA (6%, 60 IBU), Nicté Lager (4.7%), Nicté Stout y una "bikini stout" premiada.</li>
-<li><strong>Datos:</strong> en Untappd desde noviembre de 2024. Inspirada en la cultura maya. Oficina de ventas en CDMX. Se vende en La Chaya Maya, Villa Mercedes (Hilton), Proyecto Casa 459 y Agustín Gusto (Valladolid).</li>
-<li><strong>Redes:</strong> IG @cervezanicte (~3,575 seguidores) · cervezanicte.com · ventas@sibarigroup.com · +52 999 169 6765</li>
-</ul>
-</div>
+        <article class="brewery">
+          <div class="brewery-head">
+            <div class="brewery-sello sello-2">LH</div>
+            <div>
+              <h4 class="brewery-name">La'Hach</h4>
+              <div class="brewery-meta"><span class="status-dot status-active"></span>Cervecería Don Juan</div>
+            </div>
+          </div>
+          <p class="brewery-blurb">De la expresión yucateca para pedir "la última ronda". Elaborada bajo la Reinheitsgebot. También se vende en Telchac Puerto.</p>
+          <div class="brewery-tags">
+            <span class="brewery-tag">IPA</span><span class="brewery-tag">Porter</span><span class="brewery-tag">Munich Dunkel</span>
+          </div>
+          <div class="brewery-links">
+            <a href="https://www.instagram.com/la_hach_cerveza/" target="_blank" rel="noopener" class="brewery-link">@la_hach_cerveza →</a>
+          </div>
+        </article>
 
-<div class="card">
-<h3>La'Hach (Cervecería Don Juan) <span class="tag">Activa</span></h3>
-<ul>
-<li><strong>Concepto:</strong> el nombre viene de la expresión yucateca para pedir "la última ronda". Se elabora bajo la Reinheitsgebot.</li>
-<li><strong>Cervezas:</strong> La'Hach IPA (6.1%), Porter americana (6.5%) y una Munich Dunkel. Untappd las marca como "Homebrew".</li>
-<li><strong>Datos:</strong> estuvo en Cerveza México 2021. Se vende en Telchac Puerto.</li>
-<li><strong>Redes:</strong> IG @la_hach_cerveza · FB CervezaLaHach · lahachcerveza.com · ventas@cerveceriadonjuan.com · 999 152 1695</li>
-<li>Participó en el Mérida Beer Fest 2026.</li>
-</ul>
-</div>
+        <article class="brewery">
+          <div class="brewery-head">
+            <div class="brewery-sello sello-1">Ve</div>
+            <div>
+              <h4 class="brewery-name">Verdina</h4>
+              <div class="brewery-meta"><span class="status-dot status-active"></span>Fundada 2025 · Brewpub</div>
+            </div>
+          </div>
+          <p class="brewery-blurb">La más nueva. Brewpub de Vincent, quebequense, en zona Paseo Montejo. Comida de pub canadiense y ~8 canillas rotativas.</p>
+          <div class="brewery-tags">
+            <span class="brewery-tag">American Amber</span><span class="brewery-tag">Schwarzbier</span><span class="brewery-tag">Nitro Stout</span>
+          </div>
+          <div class="brewery-links">
+            <a href="https://www.instagram.com/verdinamerida/" target="_blank" rel="noopener" class="brewery-link">@verdinamerida →</a>
+          </div>
+        </article>
 
-<div class="card">
-<h3>Verdina Cerveza Artesanal <span class="tag">Activa</span></h3>
-<ul>
-<li><strong>Fundación:</strong> verano de 2025.</li>
-<li><strong>Dueño:</strong> Vincent, quebequense.</li>
-<li><strong>Ubicación:</strong> Calle 35 #500, Zona Paseo Montejo (otra fuente da Calle 37).</li>
-<li><strong>Tipo:</strong> brewpub con ~8 canillas rotativas (American Amber, Schwarzbier y Nitro Stout) y comida de pub canadiense.</li>
-<li><strong>Redes:</strong> IG @verdinamerida · FB cervezaverdina · cervezaverdina.com</li>
-<li>Participó en el Mérida Beer Fest 2026.</li>
-</ul>
-</div>
+        <article class="brewery">
+          <div class="brewery-head">
+            <div class="brewery-sello sello-8">Fl</div>
+            <div>
+              <h4 class="brewery-name">Flappers</h4>
+              <div class="brewery-meta"><span class="status-dot status-active"></span>Fundada 2019</div>
+            </div>
+          </div>
+          <p class="brewery-blurb">De Ricardo Ramírez. Nombre inspirado en las mujeres de los años 20. Su ICH (IPA con cáscara de naranja de Oxkutzcab) aspira a ser la primera cero emisiones del estado.</p>
+          <div class="brewery-tags">
+            <span class="brewery-tag">ICH IPA</span><span class="brewery-tag">American Red</span><span class="brewery-tag">Pale Ale</span><span class="brewery-tag">Stout</span>
+          </div>
+          <div class="brewery-links">
+            <a href="https://www.instagram.com/flappersbrewing/" target="_blank" rel="noopener" class="brewery-link">@flappersbrewing →</a>
+          </div>
+        </article>
 
-<div class="card">
-<h3>Cervecería Flappers <span class="tag">Activa</span></h3>
-<ul>
-<li><strong>Fundación:</strong> 2019 (confirmado por Reforma, nov. 2023).</li>
-<li><strong>Maestro cervecero:</strong> Ricardo Ramírez.</li>
-<li><strong>Tipo:</strong> nanocervecería. 7 cervezas en Untappd, 84 calificaciones.</li>
-<li><strong>Cervezas:</strong> ICH (IPA con cáscara de naranja de Oxkutzcab, aspira a ser <em>la primera cerveza cero emisiones</em> de Yucatán), American Red Ale, Pale Ale, Golden Ale y Stout. Nombre inspirado en las mujeres que desafiaron los paradigmas sociales de los años 20.</li>
-<li><strong>Redes:</strong> IG @flappersbrewing</li>
-</ul>
-</div>
+        <article class="brewery">
+          <div class="brewery-head">
+            <div class="brewery-sello sello-6">CG</div>
+            <div>
+              <h4 class="brewery-name">Casa Gaona</h4>
+              <div class="brewery-meta"><span class="status-dot status-paused"></span>Brewpub · Gran Concurso 2021</div>
+            </div>
+          </div>
+          <p class="brewery-blurb">Restaurante de cortes con cerveza propia. Primer lugar en el Gran Concurso de Cerveceros Mexicanos con la Plan B.</p>
+          <div class="brewery-links">
+            <a href="https://www.instagram.com/casa.gaona/" target="_blank" rel="noopener" class="brewery-link">@casa.gaona →</a>
+          </div>
+        </article>
 
-<div class="card">
-<h3>Dos Santos Craft Brewery <span class="tag caution">Sin confirmar</span></h3>
-<ul>
-<li><strong>Fundación:</strong> microcervecería de 2019 con 3 cervezas, según RateBeer.</li>
-<li><strong>Redes:</strong> IG @dossantoscraftbeer / @cerveza_dos_santos.</li>
-</ul>
-</div>
+        <article class="brewery">
+          <div class="brewery-head">
+            <div class="brewery-sello sello-4">DS</div>
+            <div>
+              <h4 class="brewery-name">Dos Santos</h4>
+              <div class="brewery-meta"><span class="status-dot status-paused"></span>Microcervecería · desde 2019</div>
+            </div>
+          </div>
+          <p class="brewery-blurb">Microcervecería de Mérida con tres cervezas en catálogo. Información pública limitada.</p>
+          <div class="brewery-links">
+            <a href="https://www.instagram.com/dossantoscraftbeer/" target="_blank" rel="noopener" class="brewery-link">@dossantoscraftbeer →</a>
+          </div>
+        </article>
 
-<div class="card">
-<h3>Cerveza Novel <span class="tag caution">Sin datos recientes</span></h3>
-<ul>
-<li><strong>Datos:</strong> #1 en el listado de TOP Yucatán (2021).</li>
-<li><strong>Redes:</strong> IG @cerveza_novel · snovelo13@gmail.com · 999 216 5253.</li>
-</ul>
-</div>
+        <article class="brewery">
+          <div class="brewery-head">
+            <div class="brewery-sello sello-3">No</div>
+            <div>
+              <h4 class="brewery-name">Cerveza Novel</h4>
+              <div class="brewery-meta"><span class="status-dot status-paused"></span>En listado TOP Yucatán 2021</div>
+            </div>
+          </div>
+          <p class="brewery-blurb">Proyecto meridano documentado en 2021. Datos recientes por verificar.</p>
+          <div class="brewery-links">
+            <a href="https://www.instagram.com/cerveza_novel/" target="_blank" rel="noopener" class="brewery-link">@cerveza_novel →</a>
+          </div>
+        </article>
 
-<div class="card">
-<h3>Casa Gaona <span class="tag caution">Posible mudanza</span></h3>
-<ul>
-<li><strong>Tipo:</strong> restaurante de cortes con cerveza propia que solo se vende en el local (brewpub).</li>
-<li><strong>Premios:</strong> primer lugar en el Gran Concurso de Cerveceros Mexicanos (Plan B, 2021).</li>
-<li><strong>Redes:</strong> IG @casa.gaona · 999 163 2089.</li>
-<li><strong>Estado:</strong> Mindtrip marca la sede de Av. Cupules como "Permanently closed"; otro agregador muestra horario en C. 60 #323B. Probablemente se mudó.</li>
-</ul>
-</div>
+        <article class="brewery">
+          <div class="brewery-head">
+            <div class="brewery-sello sello-2">Bo</div>
+            <div>
+              <h4 class="brewery-name">Bohr Hidromiel</h4>
+              <div class="brewery-meta"><span class="status-dot status-active"></span>Hidromiel · no cerveza</div>
+            </div>
+          </div>
+          <p class="brewery-blurb">Hidromiel "Miel de Jabín" semidulce (6.7%). Se consigue en Beer Lovers Mid. Comparte canales con el circuito artesanal.</p>
+        </article>
 
-<div class="card">
-<h3>Bohr Hidromiel <span class="tag">Activa</span></h3>
-<ul>
-<li><strong>Tipo:</strong> no es cerveza, sino hidromiel ("Miel de Jabín", semidulce, 6.7%). Lo incluyo porque comparte canales con las cervecerías.</li>
-<li><strong>Puntos de venta:</strong> Beer Lovers Mid.</li>
-</ul>
-</div>
+        <article class="brewery">
+          <div class="brewery-head">
+            <div class="brewery-sello sello-5">FP</div>
+            <div>
+              <h4 class="brewery-name">Falling Piano</h4>
+              <div class="brewery-meta"><span class="status-dot status-foreign"></span>Foránea · Produce aquí desde oct 2026</div>
+            </div>
+          </div>
+          <p class="brewery-blurb">Marca de CDMX (2018) con el piano colgado como ícono. En octubre de 2026 tomó la planta de Bacab y arrancó producción local. Primera marca foránea que produce en Yucatán.</p>
+          <div class="brewery-links">
+            <a href="https://www.instagram.com/fallingpianobrewing/" target="_blank" rel="noopener" class="brewery-link">@fallingpianobrewing →</a>
+          </div>
+        </article>
 
-<div class="card">
-<h3>Falling Piano Brewing Co. — planta Mérida <span class="tag">Foránea produciendo localmente</span></h3>
-<ul>
-<li><strong>Origen de la marca:</strong> CDMX, Coahuila 99, Roma Norte. Fundada en 2018. Primera cervecería de la Ciudad de México con tap room integrado bajo el mismo techo; el piano colgado del techo es su ícono. Participó en el Mérida Beer Fest 2026.</li>
-<li><strong>Apertura en Mérida:</strong> <strong>17 de octubre de 2026</strong>. Tomó el local completo que ocupó Cervecería Bacab, con toda la fábrica incluida (venta o arrendamiento del equipo, por confirmar).</li>
-<li><strong>Importancia histórica:</strong> es la <strong>primera marca artesanal foránea que produce dentro de Yucatán</strong>, no solo distribuye. También es el primer caso documentado de <strong>traspaso de infraestructura cervecera</strong> entre marcas en el estado: la capacidad instalada que Bacab levantó en 2023 no se pierde, cambia de manos. Si el modelo funciona, abre precedente para que otras marcas de CDMX, Monterrey o Guadalajara miren a Mérida como mercado para plantas satélite.</li>
-<li><strong>Clasificación:</strong> no cuenta como marca yucateca de origen, pero sí como productor con planta en Yucatán. Aparece aparte en el conteo para no distorsionar la cifra de marcas locales.</li>
-<li><strong>Redes:</strong> @fallingpianobrewing (CDMX). Confirmar handle de la sede yucateca.</li>
-</ul>
-</div>
+      </div>
+    </div>
 
-<div class="region">Conkal</div>
-<p>La planta de Cuerno de Toro está en Conkal (ver arriba). Es el único caso documentado de producción fuera de Mérida en la zona metropolitana.</p>
+    <!-- OXKUTZCAB -->
+    <div class="city-group">
+      <h3 class="city-name">Oxkutzcab <span>— con biogás y huerto propio</span></h3>
+      <div class="brewery-grid">
+        <article class="brewery">
+          <div class="brewery-head">
+            <div class="brewery-sello sello-8">Al</div>
+            <div>
+              <h4 class="brewery-name">Cerveza Alux</h4>
+              <div class="brewery-meta"><span class="status-dot status-active"></span>Fundada 2015 · Maquiladora</div>
+            </div>
+          </div>
+          <p class="brewery-blurb">De Miguel Ángel Tziu. Usa biogás y tiene huerto propio. Produce cerveza de la casa para siete restaurantes (La Negrita, Amaro, El Cardenal).</p>
+          <div class="brewery-tags">
+            <span class="brewery-tag">Ox (Imperial Stout c/ramón)</span><span class="brewery-tag">Kutz (ahumada c/tabaco)</span><span class="brewery-tag">Cab (Kölsch de miel)</span>
+          </div>
+          <div class="brewery-links">
+            <a href="https://www.instagram.com/cerveza_alux/" target="_blank" rel="noopener" class="brewery-link">@cerveza_alux →</a>
+          </div>
+        </article>
+      </div>
+    </div>
 
-<div class="region">Oxkutzcab</div>
+    <!-- VALLADOLID -->
+    <div class="city-group">
+      <h3 class="city-name">Valladolid <span>— el oriente también produce</span></h3>
+      <div class="brewery-grid">
+        <article class="brewery">
+          <div class="brewery-head">
+            <div class="brewery-sello sello-2">Id</div>
+            <div>
+              <h4 class="brewery-name">Idilio Folklore Cervecero</h4>
+              <div class="brewery-meta"><span class="status-dot status-active"></span>Primera artesanal de Valladolid</div>
+            </div>
+          </div>
+          <p class="brewery-blurb">De José Ayora. Taproom en Calzada de los Frailes con 10 canillas rotativas de barriles yucatecos (Thodes, Sin Filtro). Experiencia oficial de Yucatán Travel.</p>
+        </article>
 
-<div class="card">
-<h3>Cerveza Alux <span class="tag">Activa</span></h3>
-<ul>
-<li><strong>Fundación:</strong> 2015 (cronología académica de la Dra. Venus Estrella; otras fuentes la datan hacia 2014).</li>
-<li><strong>Maestro cervecero:</strong> Miguel Ángel Tziu, originario de la CDMX, con más de 10 años de experiencia.</li>
-<li><strong>Cervezas:</strong> Ox (Stout o Imperial Stout con semilla de ramón), Kutz (Pale Ale ámbar con malta ahumada con raíz de zapote y hojas de tabaco), Cab (cerveza de miel, tipo Kölsch).</li>
-<li><strong>Capacidad:</strong> era "la tercera más grande de Yucatán", con más de 900 cajas al mes.</li>
-<li><strong>Maquila:</strong> produjo cerveza de casa para 7 marcas restauranteras (La Negrita, Amaro, El Cardenal). Es el caso más claro de cervecería por contrato en el estado.</li>
-<li><strong>Sustentabilidad:</strong> usa biogás y tiene huerto propio. Ofrece la experiencia "Elabora tu lote" documentada por Yucatán Travel.</li>
-<li><strong>Redes:</strong> IG @cerveza_alux · info@cervezaalux.com · 997 122 3801</li>
-<li>Participó en el Mérida Beer Fest 2026.</li>
-</ul>
-</div>
+        <article class="brewery">
+          <div class="brewery-head">
+            <div class="brewery-sello sello-7">Da</div>
+            <div>
+              <h4 class="brewery-name">Daughfer</h4>
+              <div class="brewery-meta"><span class="status-dot status-paused"></span>Hace envíos a todo México</div>
+            </div>
+          </div>
+          <p class="brewery-blurb">Cervecería artesanal de Valladolid con seis líneas: Pale Ale, APA, Cream Ale, Tropical Ale, Porter y Stout.</p>
+        </article>
+      </div>
+    </div>
+  </div>
+</section>
 
-<div class="region">Valladolid</div>
+<!-- ========== DÓNDE PROBAR (MAPA) ========== -->
+<section id="taprooms" class="section-alt">
+  <div class="container">
+    <span class="section-eyebrow">Dónde probar</span>
+    <h2 class="section-title">Taprooms, jardines <em>y bares de cerveza</em></h2>
+    <p class="section-sub">Toca un marcador en el mapa o un lugar de la lista para ver su información. Casi todos están en el Centro de Mérida; algunos valen la caminata al norte o a Xcanatún.</p>
+    <div class="map-wrap">
+      <div id="map"></div>
+      <div class="taproom-list" id="taproom-list"></div>
+    </div>
+    <p style="margin-top: 24px; font-size: 13px; color: var(--muted); text-align: center;">
+      Las coordenadas son aproximadas. Si alguna está mal o falta un lugar, <a href="#aporta">cuéntanos</a>.
+    </p>
+  </div>
+</section>
 
-<div class="card">
-<h3>Idilio Folklore Cervecero <span class="tag">Activa</span></h3>
-<ul>
-<li><strong>Ubicación:</strong> Calzada de los Frailes 230A, junto a la Casa Ramón Mendoza.</li>
-<li><strong>Datos:</strong> el equipo de José Ayora creó "la primera cerveza artesanal de Valladolid". Taproom con 10 cervezas de barril yucatecas (Thodes, Sin Filtro).</li>
-<li><strong>Experiencias:</strong> "Cata de cervezas artesanales" (experiencia n.º 222 de Yucatán Travel).</li>
-<li><strong>Reputación:</strong> 4.8 con 995 votos en Restaurant Guru.</li>
-</ul>
-</div>
+<!-- ========== HISTORIA ========== -->
+<section id="historia">
+  <div class="container-narrow">
+    <span class="section-eyebrow">Línea de tiempo</span>
+    <h2 class="section-title">Más de un siglo <em>de cerveza</em> en Yucatán</h2>
+    <p class="section-sub">Lo esencial: cómo pasamos de una gran marca industrial a una escena artesanal viva. Fuentes: Beatriz Torres Góngora (2005), ponencia de la Dra. Venus Estrella y Grupo Reforma.</p>
+    <div class="timeline">
+      <div class="milestone">
+        <span class="milestone-year">1896</span>
+        <h3 class="milestone-title">Nace la Gran Cervecería Yucateca</h3>
+        <p class="milestone-text">José María Ponce Solís funda la empresa con tres etiquetas: La Estrella, El Conejo y La Mestiza.</p>
+      </div>
+      <div class="milestone">
+        <span class="milestone-year">1900</span>
+        <h3 class="milestone-title">Nacen Carta Clara, León Negra y Montejo</h3>
+        <p class="milestone-text">Al constituirse Cervecería Yucateca S.A. se lanzan las etiquetas que marcarían el imaginario cervecero del estado por décadas.</p>
+      </div>
+      <div class="milestone">
+        <span class="milestone-year">1953</span>
+        <h3 class="milestone-title">Se inaugura el Parque Carta Clara</h3>
+        <p class="milestone-text">Casa de los Leones de Yucatán hasta 1981. La cerveza se vuelve indisociable del beisbol yucateco.</p>
+      </div>
+      <div class="milestone">
+        <span class="milestone-year">1980</span>
+        <h3 class="milestone-title">Grupo Modelo adquiere Cervecería Yucateca</h3>
+        <p class="milestone-text">Empieza la lenta migración de la producción local hacia el gigante nacional.</p>
+      </div>
+      <div class="milestone">
+        <span class="milestone-year">2002</span>
+        <h3 class="milestone-title">Cierra la planta yucateca original</h3>
+        <p class="milestone-text">Del predio solo quedan los silos y la chimenea. Yucatán se queda sin cerveza propia.</p>
+      </div>
+      <div class="milestone">
+        <span class="milestone-year">2012</span>
+        <h3 class="milestone-title">Nace Cerveza Ceiba</h3>
+        <p class="milestone-text">Carlos Jaime Heredia abre la primera artesanal yucateca. Empieza la escena moderna.</p>
+      </div>
+      <div class="milestone">
+        <span class="milestone-year">2015</span>
+        <h3 class="milestone-title">Patito, Cuerno de Toro y Alux</h3>
+        <p class="milestone-text">Tres marcas que todavía dominan la escena abren el mismo año.</p>
+      </div>
+      <div class="milestone">
+        <span class="milestone-year">2017</span>
+        <h3 class="milestone-title">Nace la Asociación de Cerveceros Artesanales de Yucatán</h3>
+        <p class="milestone-text">Y Grupo Modelo inaugura su nueva planta en Hunucmá con inversión de $8,500 millones.</p>
+      </div>
+      <div class="milestone">
+        <span class="milestone-year">2018–2019</span>
+        <h3 class="milestone-title">La generación premiada</h3>
+        <p class="milestone-text">Thodes, Esmeralda, Mastache, Casa Pinillos y Flappers entran al mapa. Varias ganan concursos nacionales.</p>
+      </div>
+      <div class="milestone">
+        <span class="milestone-year">2020</span>
+        <h3 class="milestone-title">La ola pandémica</h3>
+        <p class="milestone-text">Sin Filtro, Memento Mori, Villamil y Milos Brew nacen entre confinamientos. Explosión del homebrewing.</p>
+      </div>
+      <div class="milestone">
+        <span class="milestone-year">2026</span>
+        <h3 class="milestone-title">Primer Mérida Beer Fest y llegada de Falling Piano</h3>
+        <p class="milestone-text">Abril: primer festival estatal. Octubre: Falling Piano (CDMX) toma la planta de Bacab y produce en Yucatán. La escena ya tiene gravedad propia.</p>
+      </div>
+    </div>
+  </div>
+</section>
 
-<div class="card">
-<h3>Cerveza Artesanal Daughfer <span class="tag caution">Sin verificar en prensa</span></h3>
-<ul>
-<li><strong>Datos:</strong> fabricante en Valladolid con 6 líneas: Pale Ale, APA (5.8%, 32 IBU), Cream Ale, Tropical Ale, Porter y Stout. Envíos a todo México.</li>
-<li><strong>Redes:</strong> cervezadaughfer.com · ventas@cervezadaughfer.com</li>
-</ul>
-</div>
+<!-- ========== EVENTOS ========== -->
+<section id="eventos" class="section-alt">
+  <div class="container">
+    <span class="section-eyebrow">Qué viene</span>
+    <h2 class="section-title">Eventos y <em>vida cervecera</em></h2>
+    <p class="section-sub">Lo que hay que agendar si te interesa la escena. Para fechas específicas, chécanos en Instagram.</p>
+    <div class="event-grid">
+      <article class="event-card">
+        <div class="event-when">Charlas y Chelas</div>
+        <h3 class="event-name">Nuestras propias charlas</h3>
+        <p class="event-text">Ponentes de ciencia, tecnología y arte, acompañadas de cerveza artesanal yucateca. Lo organiza Inexpertos Cerveceros en diferentes sedes del Centro.</p>
+      </article>
+      <article class="event-card">
+        <div class="event-when">Abril 2027 (por confirmar)</div>
+        <h3 class="event-name">Mérida Beer Fest</h3>
+        <p class="event-text">La primera edición fue en abril de 2026 en Ba'axal. Dos pabellones cerveceros, cartel musical de nivel nacional. El evento a seguir.</p>
+      </article>
+      <article class="event-card">
+        <div class="event-when">Charlas sin Filtro</div>
+        <h3 class="event-name">Con Cervecería Sin Filtro</h3>
+        <p class="event-text">Ciclo que organizamos en colaboración con Sin Filtro en su jardín cervecero. Formato más íntimo.</p>
+      </article>
+      <article class="event-card">
+        <div class="event-when">Todo el año</div>
+        <h3 class="event-name">Turibus Cervecero</h3>
+        <p class="event-text">Recorrido turístico por plantas y taprooms. Pasa por Ceiba y Hermana República; otras paradas pueden cambiar.</p>
+      </article>
+      <article class="event-card">
+        <div class="event-when">Mié–Vie 11–16 h</div>
+        <h3 class="event-name">Tours de planta en Nicté</h3>
+        <p class="event-text">Visita a la planta de Nicté en Ciudad Industrial con cata incluida. Patito y Ceiba también ofrecen tours bajo cita.</p>
+      </article>
+      <article class="event-card">
+        <div class="event-when">Octubre</div>
+        <h3 class="event-name">Oktoberfest meridano</h3>
+        <p class="event-text">Bardo Taproom y Casa Pinillos sacan Märzen y arman festejo cada octubre. Checa sus redes para fechas.</p>
+      </article>
+    </div>
+  </div>
+</section>
 
-<div class="region">Progreso, Izamal, Tizimín y otros</div>
-<ul>
-<li>No hay productores con sede documentada en Progreso, Izamal o Tizimín.</li>
-<li>Progreso solo tiene presencia de Esmeralda.</li>
-<li>Izamal funciona como mercado, con los restaurantes Kinich y Zamná y colaboraciones con Thodes.</li>
-<li>Tixkokob tiene a Pueblo Pibil como cliente.</li>
-<li>Telchac Puerto tiene venta de La'Hach.</li>
-</ul>
+<!-- ========== CTA IG GRANDE ========== -->
+<section class="cta-ig">
+  <h2>¿Quieres estar al día de la escena?</h2>
+  <p>Nuevos lanzamientos, eventos, charlas, aperturas y curiosidades de la cerveza artesanal yucateca. Síguenos en Instagram y te mantenemos informado.</p>
+  <a href="https://www.instagram.com/inexpertoscerveceros/" target="_blank" rel="noopener" class="btn btn-ig">
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z"/></svg>
+    Síguenos en @inexpertoscerveceros
+  </a>
+</section>
 
-<h2>3. Cerradas, en pausa o difuntas</h2>
+<!-- ========== APORTA ========== -->
+<section id="aporta">
+  <div class="container">
+    <span class="section-eyebrow">Aporta</span>
+    <h2 class="section-title">Este mapa <em>está vivo</em></h2>
+    <p class="section-sub">Si eres cervecera, cervecero, dueño de un taproom, o simplemente alguien que conoce algo que aquí falta: avísanos.</p>
+    <div class="aporta-grid">
+      <div class="aporta-card">
+        <h3>¿Qué puedes aportar?</h3>
+        <ul>
+          <li>Una cervecería que falta en el inventario.</li>
+          <li>Un dato equivocado o desactualizado.</li>
+          <li>Un lugar que abrió, cerró o se mudó.</li>
+          <li>Fotos de tus cervezas o tu taproom.</li>
+          <li>Historia personal de la escena cervecera local.</li>
+        </ul>
+        <p style="margin:0; font-size: 14px; color: var(--ink-soft);">Cada aporte queda citado en la siguiente versión del mapa.</p>
+      </div>
+      <div class="aporta-card">
+        <h3>Cómo contactarnos</h3>
+        <p style="margin: 0 0 16px; font-size: 15px; color: var(--ink-soft);">La vía más rápida es por mensaje directo en Instagram. También por correo.</p>
+        <a href="https://www.instagram.com/inexpertoscerveceros/" target="_blank" rel="noopener" class="btn btn-primary" style="margin-bottom: 12px;">
+          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z"/></svg>
+          @inexpertoscerveceros
+        </a>
+        <p style="font-size: 14px; color: var(--ink-soft); margin: 12px 0 0;">
+          O escríbenos a <a href="mailto:inexpertocervecero@gmail.com">inexpertocervecero@gmail.com</a>
+        </p>
+      </div>
+    </div>
+  </div>
+</section>
 
-<div class="table-wrap">
-<table>
-<thead><tr><th>Nombre</th><th>Datos</th><th>Cierre</th><th>Fuente / nota</th></tr></thead>
-<tbody>
-<tr><td>Rústica</td><td>"Precursora hoy extinta" que inspiró a Ceiba</td><td>Apareció en 2012; cierre desconocido</td><td>Reforma</td></tr>
-<tr><td>Ciudad Blanca</td><td>De Rodrigo Loeza. Empezó en 2014 con la Cazadora (trigo). Cervezas: El Jefe, El Padrino, Gitana. Se fusionó con Cuerno de Toro en Nación Brava.</td><td>Absorbida hacia 2018–2019</td><td>MID CityBeat; Behance/Mantra</td></tr>
-<tr><td>La Linda Mérida → Nación Brava</td><td>Gastropub en Calle 60 #435, con cocina de Betty Ancona. Parada del Turibus Cervecero.</td><td>Marzo de 2020 (pandemia)</td><td>Ovidio Suárez a Quadratín; TripAdvisor "CERRADO"</td></tr>
-<tr><td>Malta (bar)</td><td>"El primer bar en ofrecer microcervezas" en Mérida</td><td>Fecha desconocida</td><td>MID CityBeat</td></tr>
-<tr><td>Cervecería Bacab</td><td>Fundada en 2023 (cronología Venus Estrella). Nombre toma a los Bacab de la cosmogonía maya. Estuvo en TripAdvisor y Everybody Hates a Tourist.</td><td>Cerró entre 2025 y oct. 2026. Traspasó el local completo con toda la fábrica (venta o arrendamiento) a Falling Piano Brewing (CDMX), que arranca producción local el 17 oct 2026.</td><td>Confirmado por testimonio directo del equipo de Inexpertos Cerveceros</td></tr>
+<div class="color-band"></div>
 
-<tr><td>Taberna Montejo (TheBeerBox)</td><td>Bar en Calle 25 #112, con registros en Untappd de Fervor, Villamil, Thodes y Fauna</td><td>"Permanently closed", según Restaurant Guru</td><td>Fuente débil; sin confirmación en prensa</td></tr>
-<tr><td>Barbarita</td><td>Sin huella pública verificable de una Barbarita yucateca. Las "La Barbarita" indexadas corresponden a Torrelodones (España).</td><td>Sin confirmar</td><td>No verificable en la web abierta</td></tr>
-<tr><td>Casa Gaona (sede Cupules)</td><td>Ver sección 2</td><td>Posible reubicación</td><td>Contradicción entre agregadores</td></tr>
-</tbody>
-</table>
-</div>
-
-<h2>4. Contrato (gypsy), maquila y proyectos caseros</h2>
-
-<ul>
-<li><strong>Alux como maquilador:</strong> produce las cervezas de casa de 7 marcas de restaurantes (La Negrita, Amaro, El Cardenal). Las "cervezas de la casa" de cantinas meridanas suelen ser maquila.</li>
-<li><strong>Ceiba con "Cheva Gallos":</strong> IPA para Salón Gallos. Marca privada, no cervecería aparte.</li>
-<li><strong>Thodes con "Kinich Aniversario":</strong> ediciones especiales para un restaurante de Izamal.</li>
-<li><strong>Marcas que Untappd marca como "Homebrew":</strong> La'Hach. Que figure así no implica que sea ilegal.</li>
-<li><strong>Lupnáticos:</strong> no hay ninguna fuente indexada (web, Untappd, prensa). El único "Alex Osorio" documentado es un cervecero experto citado por Reforma, sin vincularlo a ninguna marca. Si Lupnáticos es suya, probablemente es un proyecto casero o gypsy que solo vive en Instagram. Confirmar directamente con @lupnaticos.</li>
-<li><strong>Los ~30 proyectos caseros:</strong> cifra de Osorio; en su mayoría sin registro público. El listado de TOP Yucatán (2021) da pistas: Novel, Dos Santos, Casa Gaona, Chilam. Chilam tiene teléfono de lada 55 (CDMX), así que probablemente no es yucateca.</li>
-<li><strong>Marcas del Mérida Beer Fest 2026 sin origen confirmado:</strong> Ek, Panthera Onca, Tres Lúpulos, LabOfBrew, Mrs. Ale, Happy Paws, Nota Malta, Camino Real, Yucatán Air, Trópica. (Falling Piano, Villamil y Milo Cervecería ya están resueltas en este informe.)</li>
-<li><strong>Foráneas presentes en el festival:</strong> Bichola (Mazatlán, cerveza oficial de Leones de Yucatán en la LMB), Cuca's Brewery (Toluca), Imperio de Maltas (Puebla), Follimpiano (CDMX), Cervecería Allende.</li>
-</ul>
-
-<h2>5. Taprooms, brewpubs, bares y tiendas especializadas</h2>
-
-<h3>Centro, Santa Lucía y Santa Ana (Mérida)</h3>
-<ul>
-<li><strong>Beer Lovers Mid:</strong> Calle 60 #457-465, Parque Santa Lucía. 10 canillas (mitad mexicanas, mitad belgas), tienda y Bohr Hidromiel.</li>
-<li><strong>Apóstol Tap Room:</strong> Calle 55 x 62, Santa Lucía. Hasta 12 canillas. IG @apostoltaproom.</li>
-<li><strong>Bardo Taproom:</strong> Calle 76 #448-D, Parque Santa Ana. 6 canillas y Oktoberfest.</li>
-<li><strong>Cuerno de Toro Taproom:</strong> Calle 64 #461.</li>
-<li><strong>Bird Tap:</strong> Calle 56 #463. Cerveza local y nacional, vinilos y pizza napolitana.</li>
-<li><strong>Hop 3 The Beer Experience:</strong> Paseo 60, Calle 60 #346. 11 canillas mexicanas.</li>
-<li><strong>El Cambay Bar (Esmeralda):</strong> Calle 37 #500B.</li>
-<li><strong>Verdina:</strong> Calle 35 #500.</li>
-<li><strong>Mercado Gastronómico Gran Parque La Plancha:</strong> Casa Patito, Esmeralda Taproom, Mastache La Plancha y Trópica, una "miniruta" de cerveza dentro del mercado.</li>
-<li><strong>La Negrita:</strong> cantina centenaria con cervezas yucatecas.</li>
-</ul>
-
-<h3>Norte y otros (Mérida)</h3>
-<ul>
-<li>Taproom y Jardín Mastache (San Ramón Norte y Ciudad Caucel).</li>
-<li>Hermana República (Xcanatún, Av. Colón, Victory Platz).</li>
-<li>Parque Patito (Xcanatún).</li>
-<li>Jardín Cervecero Sin Filtro (Calle 55 #968).</li>
-<li>Beer Box (pionera desde 2010, con sucursal en Campestre).</li>
-<li>El Garage (Las Américas).</li>
-<li>Raíces, Beershooter, Beer Company, Taninos para Todos, Hop Experience.</li>
-<li>La Bierhaus (más de 100 cervezas alemanas).</li>
-<li>Proyecto Casa 459 (restaurante con Nicté y Pinillos).</li>
-<li>Taberna Montejo (reportada como cerrada).</li>
-</ul>
-
-<h3>Fuera de Mérida</h3>
-<ul>
-<li>Idilio y Agustín Gusto (Valladolid).</li>
-<li>Kinich y Zamná (Izamal).</li>
-<li>Pueblo Pibil (Tixkokob).</li>
-<li>El Dzalbay (donde se registran beers de Sin Filtro).</li>
-</ul>
-
-<h2>6. Comunidades, colectivos y asociaciones</h2>
-
-<ul>
-<li><strong>Asociación de Cerveceros Artesanales de Yucatán A.C. (CAY):</strong> fundada en <strong>2017</strong>, presidida por Ovidio Suárez León (Cuerno de Toro). Sus marcas venden en 250–300 establecimientos, la mitad en Mérida. Los socios producen en promedio ~800 L al mes. Sin sitio web ni redes oficiales conocidas.</li>
-<li><strong>Inexpertos Cerveceros:</strong> comunidad de divulgación cervecera; organiza las charlas <em>Charlas y Chelas</em> y, en colaboración con Sin Filtro, el ciclo <em>Charlas sin Filtro</em>. Parte de la red STEAM @hubdecomunidades. Editores de este sitio. Contacto: inexpertocervecero@gmail.com · IG <a href="https://www.instagram.com/inexpertoscerveceros/" target="_blank" rel="noopener">@inexpertoscerveceros</a>.</li>
-<li><strong>Cerveceros de México:</strong> según su directora Maribel Quiroga Fernández, entre sus afiliadas "hay sólo una firma yucateca (La Ceiba)".</li>
-<li><strong>Club Sibarita:</strong> organiza catas donde Cuerno de Toro presentó su stout.</li>
-<li><strong>Beer Lab:</strong> estudio de mercado que encontró que el consumidor principal es estudiante de 22 años en promedio.</li>
-<li><strong>Grupos de Facebook de cerveceros caseros:</strong> existen pero no son fácilmente indexables desde buscadores públicos.</li>
-</ul>
-
-<h2>7. Eventos y festivales recurrentes</h2>
-
-<ul>
-<li><strong>Mérida Beer Fest:</strong> primera edición el 17 y 18 de abril de 2026 en el Centro de Espectáculos Ba'axal (carretera a Xcanatún). Dos pabellones cerveceros y cartel musical con Kinky, Jumbo, Px Vive, María Barracuda y Paco Familiar. Cashless. Entrada VIP: $1,785. Es el evento a seguir para 2027.</li>
-<li><strong>Turibus Cervecero (Turicervecero):</strong> recorrido por Ceiba, Nación Brava y Hermana República. Con el cierre de Nación Brava probablemente cambió su ruta.</li>
-<li><strong>Experiencias de Yucatán Travel:</strong> n.º 008 (cata en Hermana República), n.º 216 y 222 (Idilio, Valladolid), n.º 313 (elaboración de tu lote con Alux).</li>
-<li><strong>Tours de fábrica:</strong> Nicté (mié-vie 11-16 h), Patito y Ceiba.</li>
-<li><strong>Programación de venues:</strong> Domingos de Rock en Parque Patito; Oktoberfest en Bardo y Casa Pinillos (Märzen).</li>
-<li><strong>Catas privadas:</strong> Grupo Nicxa en haciendas.</li>
-<li><strong>Participación yucateca en concursos nacionales:</strong> Gran Concurso de Cerveceros Mexicanos (Thodes, Casa Pinillos, Casa Gaona), Festival Regio de Monterrey 2018 (Casa Pinillos), Cerveza México 2021 (La'Hach). Sin participación documentada en Ensenada Beer Fest.</li>
-<li><strong>Tianguis Turístico Mérida 2021:</strong> ahí se lanzó la cerveza Yucatán de Esmeralda con la Secretaría de Turismo.</li>
-</ul>
-
-<h2>8. Fuentes, contradicciones y vacíos</h2>
-
-<h4>Contradicciones detectadas</h4>
-<ul>
-<li><strong>Año de fundación de Patito:</strong> 2014 (MID CityBeat) vs. enero de 2015 (marca y Yucatán Today).</li>
-<li><strong>Ubicación de la planta de Ceiba:</strong> San Damián (Yucatán Today) vs. García Ginerés (MID CityBeat y Sipse).</li>
-<li><strong>Fundación de Fervor:</strong> 2021 (Untappd) vs. 2022 (RateBeer).</li>
-<li><strong>Flappers:</strong> 2018 o 2019, posible confusión con Casa Pinillos.</li>
-<li><strong>Bacab:</strong> sigue en TripAdvisor pero reportada como no operando en dic. 2025.</li>
-<li><strong>Casa Gaona:</strong> una sede cerrada, otra con horario.</li>
-<li><strong>Producción de Ceiba:</strong> los 26,208 L/semana reportados no cuadran con la caracterización de "micro" de Osorio.</li>
-<li><strong>Número de marcas:</strong> 10 (Sipse 2021), "más de una decena" (Rompecabeza), ~30 caseras (Osorio).</li>
-</ul>
-
-<h4>Datos pendientes de documentación</h4>
-<ul>
-<li><strong>Lupnáticos y Barbarita yucateca:</strong> mencionadas en materiales de la escena local pero sin huella pública verificable.</li>
-<li><strong>Proyectos caseros:</strong> la cifra estimada de ~30 cerveceros caseros (Alex Osorio, 2023) sigue sin inventario detallado.</li>
-<li><strong>Capacidades de producción:</strong> solo se cuenta con cifras declaradas, sin auditoría externa y de años distintos.</li>
-<li><strong>Marcas del Mérida Beer Fest 2026 con origen por confirmar:</strong> Ek, Panthera Onca, Tres Lúpulos, LabOfBrew, Mrs. Ale, Happy Paws, Nota Malta, Camino Real, Yucatán Air, Trópica.</li>
-</ul>
-
-<h4>¿Detectaste un error, falta alguien, o tienes información?</h4>
-<p>Este inventario está vivo. Si:</p>
-<ul>
-<li>Falta una cervecería que debería estar en el mapa.</li>
-<li>Un dato está mal, desactualizado o incompleto.</li>
-<li>Un lugar cerró, abrió o se mudó.</li>
-<li>Quieres sumar una ficha o aportar fotos y testimonios.</li>
-</ul>
-<p>Escríbenos a Instagram <strong><a href="https://www.instagram.com/inexpertoscerveceros/" target="_blank" rel="noopener">@inexpertoscerveceros</a></strong> o al correo <strong>inexpertocervecero@gmail.com</strong>. Cada aporte queda citado en la siguiente versión.</p>
-
+<!-- ========== FOOTER ========== -->
 <footer>
-Informe compilado en octubre de 2026. Fuentes principales: <strong>Dra. Venus Estrella</strong>, "La historia de la cerveza en México y la cervecería en Yucatán" (ponencia académica), que a su vez cita a <strong>Beatriz Torres Góngora (2005), capítulo 5 "La cervecería en Yucatán: un siglo de vida"</strong> y a <strong>Reyna y Krammer (2012)</strong>; reportaje <em>"¡Mare! Échate una chela artesanal yucateca"</em> de Grupo Reforma (25 nov. 2023); y <strong>Guía de la Cerveza Artesanal de Mérida</strong> de Gerardo Aram Correa Baeza (visitmerida.mx/descargables). Fuentes secundarias: Yucatán Today, MID CityBeat, Yucatán Magazine, Periodismo desde la Barra, Sipse/Novedades Yucatán, Rompecabeza, Quadratín Yucatán, Untappd, RateBeer, Beers and Trips, TOP Yucatán, Descubro, Yucatán Travel, sitios web y redes de las cervecerías.
+  <div class="footer-inner">
+    <div class="footer-top">
+      <div class="footer-brand">
+        <img src="img/logo.png" alt="Inexpertos Cerveceros">
+        <div>
+          <strong>Cerveza Yucatán</strong>
+          <span>Un proyecto de @inexpertoscerveceros</span>
+        </div>
+      </div>
+      <div class="footer-social">
+        <a href="https://www.instagram.com/inexpertoscerveceros/" target="_blank" rel="noopener" aria-label="Instagram">
+          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z"/></svg>
+        </a>
+        <a href="mailto:inexpertocervecero@gmail.com" aria-label="Correo">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><path d="M22 6l-10 7L2 6"/></svg>
+        </a>
+      </div>
+    </div>
+    <p class="footer-text">
+      Contenido bajo <a href="https://creativecommons.org/licenses/by-sa/4.0/" target="_blank" rel="noopener">CC BY-SA 4.0</a>.<br>
+      Fuentes principales: Beatriz Torres Góngora (2005) · Dra. Venus Estrella · Grupo Reforma (25 nov. 2023) · Guía de la Cerveza Artesanal de Mérida de Gerardo Aram Correa Baeza (visitmerida.mx) · Yucatán Today · MID CityBeat · Yucatán Magazine · Periodismo desde la Barra · Untappd · RateBeer · y testimonios directos de la comunidad cervecera.<br>
+      Mapas por <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap</a>. Hecho con cariño en Mérida.
+    </p>
+  </div>
 </footer>
 
-</div>
+<!-- ========== MAPA LEAFLET ========== -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js" integrity="sha512-BB3hKbKWOc9Ez/TAwyWxNXeoV9c1v6FIeYiBieIWkpLjauysF18NzgR1MBNBXf8/KABdlkX68nAhlwcDFLGPCQ==" crossorigin="anonymous"></script>
+<script>
+// Datos de taprooms. Coordenadas aproximadas de Mérida (zona centro y norte).
+const taprooms = [
+  { name: "Beer Lovers Mid", addr: "C. 60 x 55, Parque Santa Lucía", note: "10 canillas, mitad mexicanas, mitad belgas. También hidromiel Bohr.", lat: 20.9712, lng: -89.6230 },
+  { name: "Apóstol Tap Room", addr: "C. 55 x 62, Santa Lucía", note: "Hasta 12 canillas. @apostoltaproom", lat: 20.9720, lng: -89.6245 },
+  { name: "Bardo Taproom", addr: "C. 76 #448-D, Parque Santa Ana", note: "6 canillas. Fiesta de Oktoberfest cada año.", lat: 20.9755, lng: -89.6252 },
+  { name: "Cuerno de Toro Taproom", addr: "C. 64 #461 x 55", note: "Hasta 50 sabores en la casa de Cuerno de Toro.", lat: 20.9712, lng: -89.6238 },
+  { name: "Bird Tap", addr: "C. 56 #463", note: "Cerveza local y nacional, vinilos, pizza napolitana.", lat: 20.9705, lng: -89.6225 },
+  { name: "Hop 3 The Beer Experience", addr: "Paseo 60, C. 60 #346", note: "11 canillas mexicanas.", lat: 20.9700, lng: -89.6220 },
+  { name: "El Cambay Bar (Esmeralda)", addr: "C. 37 #500B, Santa Ana", note: "Casa de Esmeralda Brewing en Santa Ana.", lat: 20.9770, lng: -89.6230 },
+  { name: "Verdina", addr: "C. 35 #500, zona Paseo Montejo", note: "Brewpub con comida de pub canadiense y ~8 canillas rotativas.", lat: 20.9790, lng: -89.6200 },
+  { name: "Mercado La Plancha", addr: "Gran Parque La Plancha", note: "Casa Patito, Esmeralda Taproom, Mastache La Plancha y Trópica juntos en el mercado gastronómico.", lat: 20.9690, lng: -89.6155 },
+  { name: "Taproom Mastache", addr: "Av. Cámara de Comercio 263, San Ramón Norte", note: "~30 canillas, la casa principal de Mastache. Vale la pena ir al norte.", lat: 21.0170, lng: -89.6080 },
+  { name: "Jardín Cervecero Sin Filtro", addr: "C. 55 #968", note: "Jardín cervecero propio de Sin Filtro.", lat: 20.9770, lng: -89.6350 },
+  { name: "Hermana República (Xcanatún)", addr: "Carr. Mérida–Progreso km 12.8", note: "Casa cervecera de Patito. También Parque Patito y planta.", lat: 21.0375, lng: -89.6480 },
+  { name: "Hermana República Av. Colón", addr: "Av. Colón, centro-norte", note: "Sucursal de Hermana República / Patito en la ciudad.", lat: 20.9830, lng: -89.6220 },
+  { name: "Beer Box Campestre", addr: "Fracc. Campestre", note: "Pionera (desde 2010). Primer bar en Mérida con cerveza importada y artesanal.", lat: 20.9950, lng: -89.6020 },
+  { name: "La Negrita Cantina", addr: "C. 62 x 49, Centro", note: "Cantina centenaria. Sirve cervezas artesanales yucatecas.", lat: 20.9712, lng: -89.6263 },
+  { name: "Falling Piano (ex-Bacab)", addr: "Mérida (dirección por confirmar)", note: "Marca de CDMX produciendo en Mérida desde oct 2026. Primera foránea con planta local.", lat: 20.9740, lng: -89.6270 },
+  { name: "Idilio Folklore Cervecero", addr: "Calzada de los Frailes 230A, Valladolid", note: "La primera cerveza artesanal de Valladolid.", lat: 20.6878, lng: -88.2027 },
+  { name: "Nicté (planta y mini bar)", addr: "C. 19 #470, Ciudad Industrial", note: "Planta de Nicté con tours de miércoles a viernes 11-16h.", lat: 20.9400, lng: -89.6700 }
+];
+
+const map = L.map('map', { scrollWheelZoom: false }).setView([20.978, -89.6225], 13);
+L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+  attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
+  maxZoom: 19
+}).addTo(map);
+
+const customIcon = L.divIcon({
+  className: 'custom-pin',
+  html: '<div style="background:#c25a1c; width:26px; height:26px; border-radius:50% 50% 50% 0; transform:rotate(-45deg); border:3px solid #fff; box-shadow:0 2px 6px rgba(0,0,0,0.3);"><div style="width:8px; height:8px; background:#fff; border-radius:50%; position:absolute; top:50%; left:50%; transform:translate(-50%, -50%) rotate(45deg);"></div></div>',
+  iconSize: [26, 26],
+  iconAnchor: [13, 26],
+  popupAnchor: [0, -26]
+});
+
+const markers = {};
+const list = document.getElementById('taproom-list');
+
+taprooms.forEach((t, i) => {
+  // Marker en el mapa
+  const marker = L.marker([t.lat, t.lng], { icon: customIcon })
+    .addTo(map)
+    .bindPopup(`<b>${t.name}</b>${t.addr}<br><em style="color:#4a4036;">${t.note}</em>`);
+  markers[i] = marker;
+
+  // Item en la lista
+  const item = document.createElement('div');
+  item.className = 'taproom-item';
+  item.innerHTML = `
+    <h4 class="taproom-name">${t.name}</h4>
+    <p class="taproom-addr">${t.addr}</p>
+    <p class="taproom-note">${t.note}</p>
+  `;
+  item.onclick = () => {
+    map.flyTo([t.lat, t.lng], 16, { duration: 0.8 });
+    marker.openPopup();
+    document.querySelectorAll('.taproom-item').forEach(el => el.classList.remove('active'));
+    item.classList.add('active');
+  };
+  list.appendChild(item);
+});
+
+// Habilitar scroll zoom al dar clic
+map.on('click', () => map.scrollWheelZoom.enable());
+map.on('mouseout', () => map.scrollWheelZoom.disable());
+</script>
+
 </body>
 </html>
