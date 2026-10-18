@@ -572,9 +572,17 @@ section {
 .taproom-note {
   font-size: 13px;
   color: var(--ink-soft);
-  margin: 0;
+  margin: 0 0 6px;
   line-height: 1.4;
 }
+.taproom-ig {
+  display: inline-block;
+  font-size: 12px;
+  color: var(--accent);
+  font-weight: 600;
+  margin-top: 4px;
+}
+.taproom-ig:hover { color: var(--accent-hover); }
 .leaflet-popup-content-wrapper {
   border-radius: 10px;
   font-family: 'Inter', sans-serif;
@@ -847,7 +855,7 @@ section[id] { scroll-margin-top: 80px; }
     <span class="hero-eyebrow">Yucatán · 2026</span>
     <h1>La cerveza <em>artesanal</em><br>de Yucatán, en un solo mapa</h1>
     <p class="hero-sub">
-      Veinticinco cerveceras, once taprooms, siglo y medio de historia chelera. Hecho a mano por la gente de Inexpertos Cerveceros para quienes quieren probar, aprender y perderse en la escena local.
+      Veinticinco cerveceras, catorce taprooms, siglo y medio de historia chelera. Hecho a mano por la gente de Inexpertos Cerveceros para quienes quieren probar, aprender y perderse en la escena local.
     </p>
     <div class="hero-ctas">
       <a href="#taprooms" class="btn btn-primary">
@@ -877,8 +885,8 @@ section[id] { scroll-margin-top: 80px; }
         <span class="stat-label"><strong>Cerveceras locales</strong> documentadas en el inventario</span>
       </div>
       <div class="stat-card">
-        <span class="stat-num">11+</span>
-        <span class="stat-label"><strong>Taprooms y jardines</strong> cerveceros en Mérida</span>
+        <span class="stat-num">14</span>
+        <span class="stat-label"><strong>Taprooms y jardines</strong> en Mérida, Oxkutzcab y Valladolid</span>
       </div>
       <div class="stat-card">
         <span class="stat-num">1896</span>
@@ -1307,7 +1315,7 @@ section[id] { scroll-margin-top: 80px; }
   <div class="container">
     <span class="section-eyebrow">Dónde probar</span>
     <h2 class="section-title">Taprooms, jardines <em>y bares de cerveza</em></h2>
-    <p class="section-sub">Toca un marcador en el mapa o un lugar de la lista para ver su información. Casi todos están en el Centro de Mérida; algunos valen la caminata al norte o a Xcanatún.</p>
+    <p class="section-sub">Toca un marcador en el mapa o un lugar de la lista para ver su información y el link al Instagram. Los más concentrados están en Parque Santa Lucía; otros valen la caminata al norte, a Oxkutzcab o a Valladolid.</p>
     <div class="map-wrap">
       <div id="map"></div>
       <div class="taproom-list" id="taproom-list"></div>
@@ -1501,26 +1509,31 @@ section[id] { scroll-margin-top: 80px; }
 <!-- ========== MAPA LEAFLET ========== -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
 <script>
-// Datos de taprooms. Coordenadas aproximadas de Mérida (zona centro y norte).
+// Datos de taprooms. Coordenadas verificadas por la comunidad de Inexpertos Cerveceros.
 const taprooms = [
-  { name: "Beer Lovers Mid", addr: "C. 60 x 55, Parque Santa Lucía", note: "10 canillas, mitad mexicanas, mitad belgas. También hidromiel Bohr.", lat: 20.9712, lng: -89.6230 },
-  { name: "Apóstol Tap Room", addr: "C. 55 x 62, Santa Lucía", note: "Hasta 12 canillas. @apostoltaproom", lat: 20.9720, lng: -89.6245 },
-  { name: "Bardo Taproom", addr: "C. 76 #448-D, Parque Santa Ana", note: "6 canillas. Fiesta de Oktoberfest cada año.", lat: 20.9755, lng: -89.6252 },
-  { name: "Cuerno de Toro Taproom", addr: "C. 64 #461 x 55", note: "Hasta 50 sabores en la casa de Cuerno de Toro.", lat: 20.9712, lng: -89.6238 },
-  { name: "Bird Tap", addr: "C. 56 #463", note: "Cerveza local y nacional, vinilos, pizza napolitana.", lat: 20.9705, lng: -89.6225 },
-  { name: "Hop 3 The Beer Experience", addr: "Paseo 60, C. 60 #346", note: "11 canillas mexicanas.", lat: 20.9700, lng: -89.6220 },
-  { name: "El Cambay Bar (Esmeralda)", addr: "C. 37 #500B, Santa Ana", note: "Casa de Esmeralda Brewing en Santa Ana.", lat: 20.9770, lng: -89.6230 },
-  { name: "Verdina", addr: "C. 35 #500, zona Paseo Montejo", note: "Brewpub con comida de pub canadiense y ~8 canillas rotativas.", lat: 20.9790, lng: -89.6200 },
-  { name: "Mercado La Plancha", addr: "Gran Parque La Plancha", note: "Casa Patito, Esmeralda Taproom, Mastache La Plancha y Trópica juntos en el mercado gastronómico.", lat: 20.9690, lng: -89.6155 },
-  { name: "Taproom Mastache", addr: "Av. Cámara de Comercio 263, San Ramón Norte", note: "~30 canillas, la casa principal de Mastache. Vale la pena ir al norte.", lat: 21.0170, lng: -89.6080 },
-  { name: "Jardín Cervecero Sin Filtro", addr: "C. 55 #968", note: "Jardín cervecero propio de Sin Filtro.", lat: 20.9770, lng: -89.6350 },
-  { name: "Hermana República (Xcanatún)", addr: "Carr. Mérida–Progreso km 12.8", note: "Casa cervecera de Patito. También Parque Patito y planta.", lat: 21.0375, lng: -89.6480 },
-  { name: "Hermana República Av. Colón", addr: "Av. Colón, centro-norte", note: "Sucursal de Hermana República / Patito en la ciudad.", lat: 20.9830, lng: -89.6220 },
-  { name: "Beer Box Campestre", addr: "Fracc. Campestre", note: "Pionera (desde 2010). Primer bar en Mérida con cerveza importada y artesanal.", lat: 20.9950, lng: -89.6020 },
-  { name: "La Negrita Cantina", addr: "C. 62 x 49, Centro", note: "Cantina centenaria. Sirve cervezas artesanales yucatecas.", lat: 20.9712, lng: -89.6263 },
-  { name: "Falling Piano (ex-Bacab)", addr: "Mérida (dirección por confirmar)", note: "Marca de CDMX produciendo en Mérida desde oct 2026. Primera foránea con planta local.", lat: 20.9740, lng: -89.6270 },
-  { name: "Idilio Folklore Cervecero", addr: "Calzada de los Frailes 230A, Valladolid", note: "La primera cerveza artesanal de Valladolid.", lat: 20.6878, lng: -88.2027 },
-  { name: "Nicté (planta y mini bar)", addr: "C. 19 #470, Ciudad Industrial", note: "Planta de Nicté con tours de miércoles a viernes 11-16h.", lat: 20.9400, lng: -89.6700 }
+  // --- CENTRO: SANTA LUCÍA ---
+  { name: "Beer Lovers Mid", addr: "C. 60 #457-465, Parque Santa Lucía, Centro", note: "10 canillas, mitad mexicanas, mitad belgas. También hidromiel Bohr.", ig: "beerloversmid", lat: 20.9729998, lng: -89.6221004 },
+  { name: "Apóstol Tap Room", addr: "C. 55 & C. 62, Parque Santa Lucía, Centro", note: "Hasta 12 canillas de cerveza artesanal.", ig: "apostoltaproom", lat: 20.9709569, lng: -89.6226366 },
+  { name: "Cuerno de Toro Taproom", addr: "C. 64 #461, Parque Santa Lucía, Centro", note: "La casa de Cuerno de Toro: hasta 50 sabores en rotación.", ig: "cuernodetoro.taproom", lat: 20.9715111, lng: -89.6251122 },
+  { name: "Bird Tap", addr: "C. 56 #465, entre C. 55, Parque Santa Lucía, Centro", note: "Cerveza local y nacional, vinilos y pizza napolitana.", ig: "bird.hifi", lat: 20.9717359, lng: -89.6194791 },
+  { name: "Falling Piano Mérida", addr: "C. 56 #470, Parque Santa Lucía, Centro", note: "Primera cervecería foránea con planta en Yucatán. Marca de CDMX produciendo aquí desde oct 2026.", ig: "fallingpianobrewing", lat: 20.9710639, lng: -89.6193211 },
+  { name: "Volk Bar Mérida", addr: "C. 56 #469, Parque Santa Lucía, Centro", note: "Bar de cerveza en Santa Lucía.", ig: "volk.bar.mer", lat: 20.9716072, lng: -89.6190416 },
+
+  // --- CENTRO: SANTA ANA ---
+  { name: "Bardo Taproom", addr: "C. 47 #448-D, entre 58 y 60, Parque Santa Ana, Centro", note: "6 canillas. Oktoberfest cada año.", ig: "bardo.mid", lat: 20.9755147, lng: -89.6213794 },
+
+  // --- ZONA PASEO MONTEJO ---
+  { name: "Hop 3 The Beer Experience", addr: "C. 60 #346, Zona Paseo Montejo", note: "11 canillas mexicanas.", ig: "hop3merida", lat: 20.9848737, lng: -89.6194126 },
+  { name: "Verdina", addr: "C. 35 #500, Zona Paseo Montejo", note: "Brewpub de Vincent (QC): comida de pub canadiense y ~8 canillas rotativas.", ig: "verdinamerida", lat: 20.9832533, lng: -89.6185230 },
+
+  // --- NORTE DE MÉRIDA ---
+  { name: "Jardín Cervecero Sin Filtro", addr: "C. 55 #968, Fracc. Las Américas", note: "Jardín propio de Sin Filtro, al norte de la ciudad.", ig: "jardincervecerosinfiltro", lat: 21.0734820, lng: -89.6639865 },
+  { name: "The Beer Social Club", addr: "C. 10 C.22 entre 25 y 23, Montebello", note: "Taproom, bar y restaurante en Montebello.", ig: "thebeersocialclub.mx", lat: 21.0302336, lng: -89.5925323 },
+  { name: "Beer4Now Taproom", addr: "Plaza Platino, Calle 1H, Av. Campestre por 36 y 38", note: "Taproom y bar en Plaza Platino, zona Campestre.", ig: "beer4now.mx", lat: 21.0121421, lng: -89.6171120 },
+
+  // --- FUERA DE MÉRIDA ---
+  { name: "Cerveza Alux", addr: "C. 54 #69E, entre 43 y 45, Centro, Oxkutzcab", note: "La casa de Cerveza Alux. Experiencia 'elabora tu lote' con Yucatán Travel.", ig: "cerveza_alux", lat: 20.3104987, lng: -89.4151406 },
+  { name: "Idilio Folklore Cervecero", addr: "Calz. de los Frailes 230A, Sisal, Valladolid", note: "La primera cerveza artesanal de Valladolid. Taproom con 10 canillas yucatecas.", ig: "idiliomx", lat: 20.6873916, lng: -88.2080369 }
 ];
 
 const map = L.map('map', { scrollWheelZoom: false }).setView([20.978, -89.6225], 13);
@@ -1541,19 +1554,27 @@ const markers = {};
 const list = document.getElementById('taproom-list');
 
 taprooms.forEach((t, i) => {
+  const igLink = t.ig
+    ? `<br><a href="https://www.instagram.com/${t.ig}/" target="_blank" rel="noopener" style="color:#c25a1c; font-weight:600;">@${t.ig} →</a>`
+    : '';
+
   // Marker en el mapa
   const marker = L.marker([t.lat, t.lng], { icon: customIcon })
     .addTo(map)
-    .bindPopup(`<b>${t.name}</b>${t.addr}<br><em style="color:#4a4036;">${t.note}</em>`);
+    .bindPopup(`<b>${t.name}</b>${t.addr}<br><em style="color:#4a4036;">${t.note}</em>${igLink}`);
   markers[i] = marker;
 
   // Item en la lista
+  const igInline = t.ig
+    ? `<a href="https://www.instagram.com/${t.ig}/" target="_blank" rel="noopener" class="taproom-ig" onclick="event.stopPropagation();">@${t.ig}</a>`
+    : '';
   const item = document.createElement('div');
   item.className = 'taproom-item';
   item.innerHTML = `
     <h4 class="taproom-name">${t.name}</h4>
     <p class="taproom-addr">${t.addr}</p>
     <p class="taproom-note">${t.note}</p>
+    ${igInline}
   `;
   item.onclick = () => {
     map.flyTo([t.lat, t.lng], 16, { duration: 0.8 });
