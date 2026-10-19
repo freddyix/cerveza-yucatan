@@ -599,6 +599,121 @@ section {
   color: var(--ink);
 }
 
+/* ========== VOCES ========== */
+.voice-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 20px;
+  margin-top: 32px;
+}
+.voice {
+  background: var(--surface);
+  border: 1px solid var(--rule);
+  border-radius: 14px;
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  transition: transform 0.2s, box-shadow 0.2s, border-color 0.2s;
+  position: relative;
+}
+.voice:hover { transform: translateY(-3px); box-shadow: var(--shadow-lg); border-color: var(--accent-soft); }
+.voice-head {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+}
+.voice-sello {
+  flex-shrink: 0;
+  width: 54px;
+  height: 54px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'Fraunces', Georgia, serif;
+  font-weight: 700;
+  font-size: 20px;
+  color: #fff;
+  letter-spacing: -0.03em;
+  background: linear-gradient(135deg, var(--teal), var(--accent));
+}
+.voice-title {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+}
+.voice-name {
+  font-family: 'Fraunces', Georgia, serif;
+  font-weight: 700;
+  font-size: 20px;
+  line-height: 1.15;
+  color: var(--ink);
+  margin: 0;
+  letter-spacing: -0.01em;
+}
+.voice-badge {
+  display: inline-block;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  padding: 3px 10px;
+  border-radius: 999px;
+  background: var(--accent);
+  color: #fff;
+}
+.voice-blurb {
+  font-size: 14px;
+  line-height: 1.55;
+  color: var(--ink-soft);
+  margin: 0;
+}
+.voice-cats {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 4px;
+}
+.voice-cat {
+  font-size: 11px;
+  padding: 3px 10px;
+  background: var(--bg-alt);
+  color: var(--ink-soft);
+  border-radius: 999px;
+  font-weight: 500;
+}
+.voice-link {
+  margin-top: auto;
+  padding-top: 10px;
+  border-top: 1px solid var(--rule);
+  font-size: 13px;
+  color: var(--teal);
+  font-weight: 500;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+.voice-link:hover { color: var(--accent); }
+
+/* Call-to-action para que más gente se sume */
+.voice-cta {
+  grid-column: 1 / -1;
+  text-align: center;
+  padding: 32px 24px;
+  border: 2px dashed var(--rule);
+  border-radius: 14px;
+  color: var(--muted);
+  font-family: 'Fraunces', Georgia, serif;
+  font-style: italic;
+  font-size: 15px;
+  line-height: 1.5;
+  background: transparent;
+}
+.voice-cta a { font-weight: 600; }
+
 /* ========== TIMELINE ========== */
 .timeline {
   position: relative;
@@ -843,6 +958,7 @@ section[id] { scroll-margin-top: 80px; }
       <a href="#cerveceras">Cerveceras</a>
       <a href="#taprooms">Dónde probar</a>
       <a href="#historia">Historia</a>
+      <a href="#voces">Voces</a>
       <a href="#eventos">Eventos</a>
       <a href="https://www.instagram.com/inexpertoscerveceros/" target="_blank" rel="noopener" class="nav-ig">
         <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z"/></svg>
@@ -1321,44 +1437,49 @@ section[id] { scroll-margin-top: 80px; }
   </div>
 </section>
 
-<!-- ========== EVENTOS ========== -->
-<section id="eventos" class="section-alt">
+<!-- ========== VOCES ========== -->
+<section id="voces" class="section-alt">
   <div class="container">
-    <span class="section-eyebrow">Qué viene</span>
-    <h2 class="section-title">Eventos y <em>vida cervecera</em></h2>
-    <p class="section-sub">Lo que hay que agendar si te interesa la escena. Para fechas específicas, chécanos en Instagram.</p>
-    <div class="event-grid">
-      <article class="event-card">
-        <div class="event-when">Charlas y Chelas</div>
-        <h3 class="event-name">Nuestras propias charlas</h3>
-        <p class="event-text">Ponentes de ciencia, tecnología y arte, acompañadas de cerveza artesanal yucateca. Lo organiza Inexpertos Cerveceros en diferentes sedes del Centro.</p>
+    <span class="section-eyebrow">Quién la cuenta</span>
+    <h2 class="section-title">Voces de la <em>cerveza yucateca</em></h2>
+    <p class="section-sub">Divulgadores, periodistas, medios y creadores que promueven la escena artesanal del estado. Si tú también la cuentas, suma tu voz desde el formulario de abajo.</p>
+    <div class="voice-grid">
+
+      <article class="voice">
+        <div class="voice-head">
+          <div class="voice-sello">iC</div>
+          <div class="voice-title">
+            <h3 class="voice-name">Inexpertos Cerveceros</h3>
+            <span class="voice-badge">Editores</span>
+          </div>
+        </div>
+        <p class="voice-blurb">Comunidad de divulgación cervecera. Promovemos la cerveza artesanal yucateca creando conexiones sociales y profesionales a través de eventos. Editores de este sitio.</p>
+        <div class="voice-cats">
+          <span class="voice-cat">Divulgación educativa</span>
+          <span class="voice-cat">Organización de eventos</span>
+        </div>
+        <a href="https://www.instagram.com/inexpertoscerveceros/" target="_blank" rel="noopener" class="voice-link">@inexpertoscerveceros →</a>
       </article>
-      <article class="event-card">
-        <div class="event-when">Abril 2027 (por confirmar)</div>
-        <h3 class="event-name">Mérida Beer Fest</h3>
-        <p class="event-text">La primera edición fue en abril de 2026 en Ba'axal. Dos pabellones cerveceros, cartel musical de nivel nacional. El evento a seguir.</p>
-      </article>
-      <article class="event-card">
-        <div class="event-when">Charlas sin Filtro</div>
-        <h3 class="event-name">Con Cervecería Sin Filtro</h3>
-        <p class="event-text">Ciclo que organizamos en colaboración con Sin Filtro en su jardín cervecero. Formato más íntimo.</p>
-      </article>
-      <article class="event-card">
-        <div class="event-when">Todo el año</div>
-        <h3 class="event-name">Turibus Cervecero</h3>
-        <p class="event-text">Recorrido turístico por plantas y taprooms. Pasa por Ceiba y Hermana República; otras paradas pueden cambiar.</p>
-      </article>
-      <article class="event-card">
-        <div class="event-when">Bajo cita</div>
-        <h3 class="event-name">Tours de planta</h3>
-        <p class="event-text">Patito (en Xcanatún) y Ceiba (en Mérida) ofrecen visitas guiadas a sus plantas con cata incluida. Pide cita directamente por su Instagram.</p>
-      </article>
-      <article class="event-card">
-        <div class="event-when">Octubre</div>
-        <h3 class="event-name">Oktoberfest meridano</h3>
-        <p class="event-text">Bardo Taproom y Casa Pinillos sacan Märzen y arman festejo cada octubre. Checa sus redes para fechas.</p>
-      </article>
+
+      <div class="voice-cta">
+        ¿Promueves la cerveza artesanal yucateca?<br>
+        <a href="#aporta">Suma tu voz desde el formulario</a>
+      </div>
+
     </div>
+  </div>
+</section>
+
+<!-- ========== EVENTOS ========== -->
+<section id="eventos">
+  <div class="container-narrow" style="text-align: center;">
+    <span class="section-eyebrow">Qué viene</span>
+    <h2 class="section-title" style="display: block;">Eventos y <em>vida cervecera</em></h2>
+    <p class="section-sub" style="margin-left: auto; margin-right: auto;">Charlas, catas, ferias y festejos — pronto empezaremos a publicar la agenda cervecera aquí. Mientras tanto, sigue nuestras historias en Instagram para enterarte de todo.</p>
+    <a href="https://www.instagram.com/inexpertoscerveceros/" target="_blank" rel="noopener" class="btn btn-primary" style="margin-top: 8px;">
+      <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z"/></svg>
+      Síguenos en Instagram
+    </a>
   </div>
 </section>
 
