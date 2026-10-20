@@ -1,0 +1,7 @@
+# cervezayucatan.com — Mapa de la cerveza artesanal yucateca
+# Hecho por @inexpertoscerveceros
+
+User-agent: *
+Allow: /
+
+Sitemap: https://cervezayucatan.com/sitemap.xml
